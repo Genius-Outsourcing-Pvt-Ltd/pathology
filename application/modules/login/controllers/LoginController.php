@@ -7,6 +7,7 @@ class Login_LoginController extends Zend_Controller_Action {
     }
 
     public function indexAction() {
+        $this->_helper->layout->setLayout('login');
         $forms = Zend_Registry::get('forms');
         $form = new Zend_Form($forms->user->login);
         $userManagement = new Application_Model_User();
@@ -14,28 +15,15 @@ class Login_LoginController extends Zend_Controller_Action {
         $auth->setStorage(new Zend_Auth_Storage_Session('user'));
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
+            
             $error = array();
-            if ($data['username'] == '') {
-                $error['username'] = 'Username is required!';
-            }
-            if ($data['password'] == '') {
-                $error['password'] = 'Password is required!';
-            }
-            if (empty($error)) {
-                if (!$form->isErrors()) {
-
-                    $userName = $this->_request->getParam('username', '');
-                    $password = $this->_request->getParam('password', '');
-                    $remember = $this->_request->getParam('remember');
-
-                    if ($remember > 0) {
-                        $rememberMe = 1;
-                    } else {
-                        $rememberMe = 0;
-                    }
+            if ($form->isValid($data)) {
+                    $userName = $form->username->getValue();
+                    $password = $form->password->getValue();
+                    $remember = $this->_request->getParam('remember', 0);
 
                     $userTable = new Application_Model_DbTable_User();
-                    $userExits = $userTable->fetchRow('username = "' . $userName . '" AND status = "Active" AND password= "' . md5($password) . '" AND deleted_at IS NULL');
+                    $userExits = $userTable->fetchRow('username = "' . $userName . '" AND password= "' . md5($password) . '" AND deleted_at IS NULL');
                     $magUser = false;
                     if (!empty($userExits)) {
                         $userExits = $userExits->toArray();
@@ -43,27 +31,23 @@ class Login_LoginController extends Zend_Controller_Action {
                             $magUser = true;
                         }
                     }
-//                    echo '<pre>'; print_r($userExits);
-//                    var_dump($magUser); die;
+
                     if ($magUser) {
-                        $response = "Invalid username or password";
+                        $form->username->setErrors(array(
+                             'Invalid username or password'
+                        ));
                     } else {
-                        $response = $userManagement->login($userName, md5($password), $rememberMe);
+                        $response = $userManagement->login($userName, md5($password), $remember);
                     }
                     if ($response == 'success') {
+                       $this->_redirect('dashboard');
                     } else {
-                        $error['error'] = 'Invalid username or password';
+                        $form->username->setErrors(array(
+                            'Invalid username or password'
+                        ));
                     }
-                    echo Zend_Json::encode($error);
-                    die;
-                }
-            } else {
-                echo Zend_Json::encode($error);
-                die;
-            }
+            } 
         }
-
-
         $this->view->form = $form;
     }
 

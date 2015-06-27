@@ -1,54 +1,38 @@
-<div class="login_container"> <img src="http://v6dev.academicapproach.com/assets/images/login_logo.png" width="302" height="43" />
-                             <form method="post" action="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'index'), 'default', true); ?>">
-                <div class="login_msg mL10">
-                    <div id="dd" class="wrapper-dropdown-4" tabindex="1">
-                        <!--<input type="text" value="" name="username" placeholder='Username' />-->
-                        <?php  echo $this->form->username; ?>
-                    </div>
-                    ​</div>
-                <div class="login_msg mL10">
-                    <div id="dd" class="wrapper-dropdown-4 mt0" tabindex="1">
-                        <!--<input type="password" value="" autocomplete="off" name="password" placeholder='Password' />-->
-                        <?php echo $this->form->password; ?>
-                    </div>
-                    ​</div>
-                <input name="" type="submit" class="login_btn" value="Log-in" />
-
-                <!-- <label class="remember"><input name="remember" type="radio" value="1" />Remember Me</label> -->
-                <span class="pt11">
-                    <input type="checkbox" name="remember" value="1" id="remember" class="css-checkbox"
-                                                      /><label for="remember" class="css-label m00 txt_14 w95">Remember Me</label>
-                </span>
-            </form>
-        </div>
+<div class="login_container">
+    <?php if(count($this->form->getMessages())) {
+        $messages = $this->form->getMessages();?>
+    <div class="alert alert-danger">
+        <ul>
+            <?php foreach($messages as $row){?>
+            <li class="error"> <?php echo( (is_array($row))?(current ($row)) : $row ); ?> </li>
+            <?php } ?>
+        </ul>
+    </div>
+    <?php } ?>
+    <form method="post" action="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'index'), 'default', true); ?>">
+        <div class="login_msg mL10">
+            <div id="dd" class="wrapper-dropdown-4">
+                <?php echo $this->form->username; ?>
+            </div>
+            ​</div>
+        <div class="login_msg mL10">
+            <div id="dd" class="wrapper-dropdown-4 mt0" >
+                <?php echo $this->form->password; ?>
+            </div>
+            ​</div>
+        <input id="login" name="" type="submit" class="login_btn" value="Log-in" />
+        <span class="pt11">
+            <input type="checkbox" name="remember" value="1" id="remember" class="css-checkbox"
+                   /><label for="remember" class="css-label m00 txt_14 w95">Remember Me</label>
+        </span>
+    </form>
+</div>
 
 <script>
-    $(document).on('click','#login', function(){
-        $("#loginForm").ajaxForm({
-            dataType:'json',
-            success:function(data){
-                
-                if(data != ''){
-                    if(data['success'] != undefined){
-                        if(data['success'] == 'Parent'){
-                            window.location.href= '<?php echo $this->url(array(), 'dashboard', true); ?>';
-                        }else{
-                            window.location.href= '<?php echo $this->url(array('module' => 'admin', 'controller' => 'acl', 'action' => 'dashboard'), 'default', true); ?>';   
-                        }
-                    }else{
-                        $.each(data,function(key,val){
-                            $('#error').show();
-    
-                        })
-                    }
-                }
-            }
-        }).submit();
-    });
-    $(document).keydown(function(e){
-        if(e.keyCode == 13){
-            if ( $("*:focus").is("input") ){
-                 $('#login').click();
+    $(document).keydown(function(e) {
+        if (e.keyCode == 13) {
+            if ($("*:focus").is("input")) {
+                $('#login').click();
             }
         }
     })
