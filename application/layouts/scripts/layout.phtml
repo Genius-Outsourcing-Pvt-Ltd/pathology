@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Pathology</title>
+        <link href="<?php echo $this->baseUrl('assets/css/styles.css'); ?>" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="<?php echo $this->baseUrl('assets/js/jquery-1.11.3.min.js'); ?>"></script>
+    </head>
+    <body>
+        <div class="container">
+            <!--rendring header for layout-->
+            <?php echo $this->render('partials/_header.phtml') ?>
+
+            <!--The content area of layout-->
+            <section>
+                <ul class="hgt43"></ul>
+                <div class="clr"></div>
+                <?php echo $this->layout()->content; ?>
+            </section>
+            <!--rendring footer for layout-->
+            <?php echo $this->render('partials/_footer.phtml') ?>
+            <div class="clr"></div>
+        </div>
+    </body>
+</html>
