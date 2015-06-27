@@ -7,6 +7,12 @@ class Login_LoginController extends Zend_Controller_Action {
     }
 
     public function indexAction() {
+        $auth = Zend_Auth::getInstance();
+        $auth->setStorage(new Zend_Auth_Storage_Session('user'));
+        if ($auth->hasIdentity()) {
+            $this->_redirect('dashboard');
+        }
+        
         $this->_helper->layout->setLayout('login');
         $forms = Zend_Registry::get('forms');
         $form = new Zend_Form($forms->user->login);
