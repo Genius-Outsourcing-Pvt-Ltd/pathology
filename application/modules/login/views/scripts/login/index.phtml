@@ -1,38 +1,27 @@
+<div class="login_container"> <img src="http://v6dev.academicapproach.com/assets/images/login_logo.png" width="302" height="43" />
+                             <form method="post" action="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'index'), 'default', true); ?>">
+                <div class="login_msg mL10">
+                    <div id="dd" class="wrapper-dropdown-4" tabindex="1">
+                        <!--<input type="text" value="" name="username" placeholder='Username' />-->
+                        <?php  echo $this->form->username; ?>
+                    </div>
+                    ​</div>
+                <div class="login_msg mL10">
+                    <div id="dd" class="wrapper-dropdown-4 mt0" tabindex="1">
+                        <!--<input type="password" value="" autocomplete="off" name="password" placeholder='Password' />-->
+                        <?php echo $this->form->password; ?>
+                    </div>
+                    ​</div>
+                <input name="" type="submit" class="login_btn" value="Log-in" />
 
-<div id="loginbox">
-   
-     <div class="clr"></div>
-    <form method="post" id="loginForm" action="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'index'), 'default', true); ?>" enctype="multipart/form-data">
-        <!--  start login-inner -->
-        <div id="login-inner">
-            <div class="clr"></div>
-	     <span class="errorLogin" id="error" style=" display:none;"><b>Incorrect Login!</b></span>
-	     <div class="clr"></div>
-            <?php echo $this->partial('error.phtml', array('form' => $this->form)); ?>
-            <table border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                    <th>Username</th>
-                    <td><?php echo $this->partial('element.phtml', array('element' => $this->form->username)); ?></td>
-                </tr>
-                <tr>
-                    <th>Password</th>
-                    <td><?php echo $this->partial('element.phtml', array('element' => $this->form->password)); ?></td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <td valign="top"><input type="checkbox" value="1" name="remember" class="checkbox-size" id="login-check" /><label for="login-check">Remember me</label></td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <td><input type="button" id="login" class="submit-login" value="Login" /></td>
-                </tr>
-            </table>
+                <!-- <label class="remember"><input name="remember" type="radio" value="1" />Remember Me</label> -->
+                <span class="pt11">
+                    <input type="checkbox" name="remember" value="1" id="remember" class="css-checkbox"
+                                                      /><label for="remember" class="css-label m00 txt_14 w95">Remember Me</label>
+                </span>
+            </form>
         </div>
-    </form>
-    <!--  end login-inner -->
-    <div class="clr"></div>
-    <!--    <a href="" class="forgot-pwd">Forgot Password?</a>-->
-</div>
+
 <script>
     $(document).on('click','#login', function(){
         $("#loginForm").ajaxForm({
