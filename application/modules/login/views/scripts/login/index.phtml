@@ -5,13 +5,7 @@
     <form method="post" id="loginForm" action="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'index'), 'default', true); ?>" enctype="multipart/form-data">
         <!--  start login-inner -->
         <div id="login-inner">
-	 <!-- start logo -->
-            <div id="logo-login">
-                <a href="javascript:;"><img width="200" src="<?php echo $this->baseUrl(); ?>/images/shared/logo.png" width="256" alt="" /></a>
-            </div>
-            <!-- end logo -->
-	    <div class="clr"></div>
-	    
+            <div class="clr"></div>
 	     <span class="errorLogin" id="error" style=" display:none;"><b>Incorrect Login!</b></span>
 	     <div class="clr"></div>
             <?php echo $this->partial('error.phtml', array('form' => $this->form)); ?>
@@ -48,7 +42,7 @@
                 if(data != ''){
                     if(data['success'] != undefined){
                         if(data['success'] == 'Parent'){
-                            window.location.href= '<?php echo $this->url(array(), 'parentdashboard', true); ?>';
+                            window.location.href= '<?php echo $this->url(array(), 'dashboard', true); ?>';
                         }else{
                             window.location.href= '<?php echo $this->url(array('module' => 'admin', 'controller' => 'acl', 'action' => 'dashboard'), 'default', true); ?>';   
                         }

@@ -7,7 +7,6 @@ class Login_LoginController extends Zend_Controller_Action {
     }
 
     public function indexAction() {
-        $this->_helper->layout->setLayout('login');
         $forms = Zend_Registry::get('forms');
         $form = new Zend_Form($forms->user->login);
         $userManagement = new Application_Model_User();
@@ -32,11 +31,11 @@ class Login_LoginController extends Zend_Controller_Action {
                     if ($remember > 0) {
                         $rememberMe = 1;
                     } else {
-                        $rememberMe = 1;
+                        $rememberMe = 0;
                     }
 
                     $userTable = new Application_Model_DbTable_User();
-                    $userExits = $userTable->fetchRow('email = "' . $userName . '" AND status = "Active" AND password= "' . md5($password) . '"');
+                    $userExits = $userTable->fetchRow('username = "' . $userName . '" AND status = "Active" AND password= "' . md5($password) . '" AND deleted_at IS NULL');
                     $magUser = false;
                     if (!empty($userExits)) {
                         $userExits = $userExits->toArray();
@@ -51,11 +50,7 @@ class Login_LoginController extends Zend_Controller_Action {
                     } else {
                         $response = $userManagement->login($userName, md5($password), $rememberMe);
                     }
-//                    echo $response; die;
                     if ($response == 'success') {
-                        $acl = new Application_Model_Acl();
-                        $error['success'] = $acl->department;
-//                        $this->_redirect('admin/acl/reports');
                     } else {
                         $error['error'] = 'Invalid username or password';
                     }
