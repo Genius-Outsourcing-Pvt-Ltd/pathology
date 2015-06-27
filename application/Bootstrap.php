@@ -12,13 +12,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $front = Zend_Controller_Front::getInstance();
         $router = $front->getRouter();
 
-        try {
-            $routeConfig = new Zend_Config_Ini(APPLICATION_PATH . '/configs/routes.ini', APPLICATION_ENV);
+
+            $routeConfig = new Zend_Config_Ini(APPLICATION_PATH . '/configs/routes.ini');
             $router->addConfig($routeConfig, 'routes');
-        } catch (Exception $e) {
-            $routeConfig = new Zend_Config_Ini(APPLICATION_PATH . '/configs/routes.ini', 'production');
-            $router->addConfig($routeConfig, 'routes');
-        }
     }
 
 }

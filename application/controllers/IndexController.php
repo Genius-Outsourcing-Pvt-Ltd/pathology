@@ -11,12 +11,12 @@ class IndexController extends Zend_Controller_Action
     public function indexAction()
     {
         // action body
-        $user = new Application_Model_DbTable_User();
-        $data = array(
-            'created_at'      => '2007-03-22',
-            'username' => 'testname'
-        );
-       $users = $user->insert($data);
+//        $user = new Application_Model_DbTable_User();
+//        $data = array(
+//            'created_at'      => '2007-03-22',
+//            'username' => 'testname'
+//        );
+//       $users = $user->insert($data);
  
     }
 
