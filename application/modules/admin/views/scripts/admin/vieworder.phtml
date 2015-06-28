@@ -6,6 +6,9 @@
     <section class="drop_downs no-bdr">
         <div class="tab_panel">
             <h3>View Order</h3>
+            <?php if($this->userType == 'patient'){?>
+                    <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf'), 'downloadPdf', true); ?>" class="compse_btn">Download PDF</a>
+            <?php } ?>
             <a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'index'), 'patient_orders', true); ?>" class="compse_btn">Back</a>
             <div class="clr"></div>
             <div class="data_listing">
@@ -26,9 +29,7 @@
                         <li class="w190 pL15"><?php echo $this->userType == 'patient'?($test['results'] != ''?$test['results']:0):'<input placeholder="Enter Result Here" class="result-input" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />'; ?></li>
                         <li class="w190 pL16"><?php echo date('m-d-Y', strtotime($test['created_at'])); ?></li>
                         <li class="last w80">
-                            <?php if($this->userType == 'patient'){ if($test['results'] != ''){ ?>
-                                <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'viewreport','id'=>$test['test_id']), 'viewreport', true); ?>">view</a>
-                            <?php } }else{ ?>
+                            <?php if($this->userType != 'patient'){?>
                                 <a href="javascript:;" onclick="saveResult(this,'<?php echo $test['test_id'] ?>','<?php echo $test['order_id'] ?>')">save</a>
                             <?php } ?>
                         </li>
