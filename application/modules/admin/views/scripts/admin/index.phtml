@@ -38,3 +38,11 @@
     </section>
     <div class="clr"></div>
 </section>
+<input type='text' id='mail_sent' value='<?php echo $this->mail_sent; ?>'>
+<script>
+    $(document).ready(function(){
+        if($('#mail_sent').val() == 'mail_sent'){
+            showMsg('Email sent successfully to your email address');
+        }
+    });
+</script>
