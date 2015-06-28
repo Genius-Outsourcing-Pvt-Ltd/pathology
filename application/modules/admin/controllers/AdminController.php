@@ -64,10 +64,15 @@ class Admin_AdminController extends Zend_Controller_Action {
         $form = new Zend_Form($forms->orders->adduser);
         if($form->isValid($data)){
             $patient = new Application_Model_Patient();
-            $result = $patient->save($data);
-            $erro_data['id'] = $result['id'];
-            $erro_data['order_id'] = $result['order_id'];
-            $erro_data['messages'] = ' Successfully saved';
+            if($patient->check_mrn($data)){
+                $result = $patient->save($data);
+                $erro_data['id'] = $result['id'];
+                $erro_data['order_id'] = $result['order_id'];
+                $erro_data['messages'] = ' Successfully saved';
+            }else{
+                 $erro_data['messages'] = ' MRN already exists';
+            }
+            
 
         }else{
             $erro_data['id'] = $this->_request->getParam('id',0);

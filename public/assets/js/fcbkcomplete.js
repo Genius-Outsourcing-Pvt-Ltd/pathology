@@ -191,7 +191,7 @@
           if (complete_hover) {
             complete.fadeOut("fast");
           } else {
-            input.focus();
+//            input.focus();
           }
         });
         
