@@ -1,0 +1,58 @@
+<section class="msgs_box">
+    <div class="msgs_links">
+        <h1>Admin Panel</h1>
+        <div class="clr"></div>
+    </div>
+    <section class="drop_downs no-bdr">
+        <div class="tab_panel">
+            <h3>My Dashboard</h3>
+            <div class="clr"></div>
+            <div class="data_listing">
+                <div class="data_listing_header">
+                    <p class="heading_1 w230">Name</p>
+                    <p class="heading_1 w190 pL20">Order</p>
+                    <p class="heading_1 w190">Test Name</p>
+                    <p class="heading_1 w190">Result</p>
+                    <p class="heading_1 w190">Created At</p>
+                    <div class="clr"></div>
+                </div>
+                <div class="clr"></div>
+                <?php foreach($this->patient as $test){ ?>
+                    <ul>
+                        <li class="w230 pL25"><?php echo $test['name']; ?></li>
+                        <li class="w190 pL15"><?php echo $test['order_id']; ?></li>
+                        <li class="w190 pL22"><?php echo $test['test_name']; ?></li>
+                        <li class="w190 pL15"><?php echo '<input placeholder="Enter Result Here" class="result-input" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />'; ?></li>
+                        <li class="w190 pL16"><?php echo date('m-d-Y', strtotime($test['created_at'])); ?></li>
+                        <li class="last w80">
+                            <a href="javascript:;" onclick="saveResult(this,'<?php echo $test['test_id'] ?>','<?php echo $test['order_id'] ?>')">save</a>
+                        </li>
+                    </ul>
+                <?php } ?>
+                <div class="clr"></div>
+            </div>
+            <div class="clr"></div>
+        </div>
+
+        <div class="clr"></div>
+    </section>
+    <div class="clr"></div>
+</section>
+<script>
+function saveResult(elem,testId,orderId){
+    var result = $(elem).closest('ul').children('li').find('input.result-input').val();
+    if(result != ''){
+        $.ajax({
+            url:'<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'saveresult'), 'default', true); ?>',
+            type:'post',
+            dataType:'json',
+            data:{result:result, testId:testId, orderId:orderId},
+            success: function(data){
+                if(data.response == 'success'){
+                    showMsg('Result Saved Successfully')
+                }
+            }
+        });
+    }
+}
+</script>
