@@ -64,10 +64,15 @@ class Admin_AdminController extends Zend_Controller_Action {
         $form = new Zend_Form($forms->orders->adduser);
         if($form->isValid($data)){
             $patient = new Application_Model_Patient();
-            $result = $patient->save($data);
-            $erro_data['id'] = $result['id'];
-            $erro_data['order_id'] = $result['order_id'];
-            $erro_data['messages'] = ' Successfully saved';
+            if($patient->check_mrn($data)){
+                $result = $patient->save($data);
+                $erro_data['id'] = $result['id'];
+                $erro_data['order_id'] = $result['order_id'];
+                $erro_data['messages'] = ' Successfully saved';
+            }else{
+                 $erro_data['messages'] = ' MRN already exists';
+            }
+            
 
         }else{
             $erro_data['id'] = $this->_request->getParam('id',0);
@@ -83,7 +88,22 @@ class Admin_AdminController extends Zend_Controller_Action {
             echo json_encode($erro_data);
             die();
     }
-
+    public function searchAction(){
+        $tag = $this->_request->getParam('tag',0);
+        $pat_obj = new Application_Model_Patient();
+        $result = $pat_obj->search($tag);
+        header('Content-type: application/json');
+        echo json_encode($result);
+        die();
+    }
+    public function getpatientAction(){
+        $id = $this->_request->getParam('id',0);
+         $pat_obj = new Application_Model_Patient();
+         $patient = $pat_obj->getById($id);
+            header('Content-type: application/json');
+        echo json_encode($patient);
+        die();
+    }
     public function manageuserAction() {
         $model = new Application_Model_User();
         $select = $model->getallUser();

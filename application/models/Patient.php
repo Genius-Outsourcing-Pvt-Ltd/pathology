@@ -60,7 +60,7 @@ class Application_Model_Patient extends Application_Model_DbTable_Patient {
         $dataPosted['created_at'] = date('Y-m-d H:i:s');
         $user_data = array_intersect_key($dataPosted, $arrayCols);
         $patient_data = array_intersect_key($dataPosted, $arrayColsPat);
-        
+        unset($patient_data['id']);
         
         $user_data['username']=$dataPosted['m_r_no'];
         $user_data['password']= md5($dataPosted['m_r_no']);
@@ -121,4 +121,44 @@ class Application_Model_Patient extends Application_Model_DbTable_Patient {
            return $result;
         
     }
+    public function search($tag){
+        $obj = new Zend_Db_Select(Zend_Db_Table::getDefaultAdapter());
+        $select = $obj->from('patients as p', array('m_r_no'))
+                ->join('users as u', 'p.user_id=u.id', array(new Zend_Db_Expr('CONCAT(first_name," ",last_name) as name'), 'id'))
+                ->where('CONCAT(first_name," ",last_name) like \'%'.$tag.'%\' or m_r_no like \'%'.$tag.'%\' ')
+                ;
+        $q_result = $select->query()->fetchAll();
+        $result = [];
+        foreach($q_result as $row){
+            $result[]=['key'=>$row['id'], 'value'=>'Name: '.$row['name'].' M.R.N.NO:'.$row['m_r_no']];
+        }
+        return $result;
+        
+        }
+        
+     public function getById($id){
+        $obj = new Zend_Db_Select(Zend_Db_Table::getDefaultAdapter());
+        $select = $obj->from('patients as p', array('m_r_no'))
+                ->join('users as u', 'p.user_id=u.id', array('id', 'first_name', 'last_name', 'phone_number', 'address', 'birthday', 'sex' , 'email'))
+                ->where('u.id = '.$id)
+                ;
+        $q_result = $select->query()->fetchAll();
+        if(isset($q_result[0])){
+            $q_result = $q_result[0];
+        }
+        return $q_result;
+     }
+     public function check_mrn($data){
+         $id = empty($data['id'])?0:$data['id'];
+         $m_r_n_no = empty($data['m_r_no'])?0:$data['m_r_no'];
+         $obj = new Zend_Db_Select(Zend_Db_Table::getDefaultAdapter());
+        $result = $obj->from('patients as p', array('id'))
+                ->where('user_id != ' .$id . ' and m_r_no = '.$m_r_n_no )
+                ->query()->fetchAll();
+         if(count($result)){
+             return false;
+         }else{
+             return true;
+         }
+     }
 }
