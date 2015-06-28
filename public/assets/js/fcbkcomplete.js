@@ -1,328 +1,622 @@
+/**
+ FCBKcomplete v2.8.9.3 is released under the MIT License <http://www.opensource.org/licenses/mit-license.php>
+ - Jquery version required: 1.6.x
+*/
 
- FCBKcomplete 1.09
- - Jquery version required 1.2.x, 1.3.x
- 
- Changelog
- - 1.09 IE crash fixed
- 
- - 1.08 some minor bug fixed
- 
- - 1.07 case sensetive added
- 		applied filter to non ajax items
- 		filter algorithm changed
- 		cache for ajax request added
- 		updown with auto scrolling
- 		minor code fixes
- 
- - 1.06 auto heigth fix
-		event bind on main element for better user frendly experience
-		filter for items
-		updown keys supported from now
- 
- - 1.05	bindEvents function fixed thanks to idgnarn
- 
- - 1.04	IE7 em tag replace fixed
- 
- - 1.03 IE7 & IE6 crash fixed
- 		IE7 css fixed
- 
- - 1.02 json parsing fixed
- 		remove element fixed
- 
- - 1.01 some bugs fixed
- 
- - 1.0	migration from prototype
- 
- Coded by emposha admin@emposha.com 
- Copyright Emposha.com httpwww.emposha.com - Distributed under MIT - Keep this message! 
+/* Based on TextboxList by Guillermo Rauch http://devthought.com/ */
 
-  elem - input element id or object
-  list - preadded elements
-  complete - autocomplete div id or object
-  ajax - object with two parametrs a) url to fetch json object b) use cache
-  height - maximum number of element shown before scroll will apear
-  filter - object with two parametrs a)case sensitive b) showhide filtered items
-  newel - show typed text like a element
- 
-jQuery.facebooklist = function(elem, list, complete, ajax, height, filter, newel) {
-    var addHiddenInput = function(value) {
-        var input = document.createElement('input');
-        $(input).attr({
-            'type' 'hidden',
-            'name' (elem.attr('id') + '[]'),
-            'id' (elem.attr('id') + '[]'),
-            'value' value
-        });
-        return input;
-    }
-    var getChar = function(e) {
-        if (window.event) {
-            keynum = e.keyCode;
-        } else
-        if (e.which) {
-            keynum = e.which;
+/**
+ * width            - element width (by default 512px)
+ * json_url         - url to fetch json object
+ * cache            - use cache
+ * height           - maximum number of element shown before scroll will apear
+ * newel            - show typed text like a element
+ * firstselected    - automaticly select first element from dropdown
+ * filter_case      - case sensitive filter
+ * filter_selected  - filter selected items from list
+ * filter_begin     - filter only from begin
+ * complete_text    - text for complete page
+ * maxshownitems    - maximum numbers that will be shown at dropdown list (less better performance)
+ * oncreate         - fire event on item create
+ * onselect         - fire event on item select
+ * onremove         - fire event on item remove
+ * maxitimes        - maximum items that can be added
+ * delay            - delay between ajax request (bigger delay, lower server time request)
+ * addontab         - add first visible element on tab or enter hit
+ * addoncomma       - add first visible element when pressing the comma key
+ * attachto         - after this element fcbkcomplete insert own elements
+ * bricket          - use square bricket with select (needed for asp or php) enabled by default
+ * input_tabindex   - the tabindex of the input element
+ * input_min_size   - minimum size of the input element (default: 1)
+ * input_name       - value of the input element's 'name'-attribute (no 'name'-attribute set if empty)
+ * select_all_text  - text for select all link
+ */
+
+(function( $, undefined ) {
+  $.fn.fcbkcomplete = function(opt) {
+    return this.queue( function() {
+      function init() {
+        createFCBK();
+        addInput(0);
+      }
+
+      function createFCBK() {
+        holder = $('<ul class="holder"></ul>').width(options.width);
+        if (options.attachto) {
+          if (typeof(options.attachto) == "object") {
+            options.attachto.append(holder);
+          } else {
+            $(options.attachto).append(holder);
+          }
+        } else {
+          element.after(holder);
         }
-        if (keynum == 8)
-            return '';
-        return String.fromCharCode(keynum);
-    }
-    var addItem = function(item, preadded) {
-        var title = item.text();
-        var value = (item.attr('rel') && item.attr('rel') != -1  item.attr('rel')  title);
-        var li = document.createElement('li');
-        var txt = document.createTextNode(title);
-        var aclose = document.createElement('a');
-        var input = addHiddenInput(value);
-        $(li).attr({
-            'class' 'bit-box'
+        complete = $('<div class="facebook-auto">').width(options.width);
+        if (options.complete_text != "") {
+          var completeText = options.complete_text;
+          complete.append('<div class="default">' + completeText +  '</div>');
+          if (options.select_all_text) {
+            complete.children('.default').append($('<a href="" class="select_all_items">' + options.select_all_text + '</a>').click(function(){$(element).trigger('selectAll'); return false;}));
+          }
+        }
+        complete.hover(function() {complete_hover = 0;}, function() {complete_hover = 1;});
+        feed = $('<ul id="'+elemid+'_feed"></ul>').width(options.width);
+        holder.after(complete.prepend(feed));
+        elPrepare();
+      }
+
+      function elPrepare() {
+        name = element.attr("name");
+        if (options.bricket) {
+          if (typeof(name) != 'undefined' && name.indexOf("[]") == -1) {
+            name = name + "[]";
+          }
+        }
+
+        var temp_elem = $('<'+element.get(0).tagName+' name="'+name+'" id="'+elemid+'" multiple="multiple" class="' + element.get(0).className + ' hidden">').data('cache', {});
+        
+        $.each(element.children('option'), function(i, option) {
+          option = $(option);
+          temp_elem.data('cache')[option.val()] =  option.text();
+          if (option.hasClass("selected")) {
+            var id = addItem(option.text(), option.val(), true, option.hasClass("locked"));
+            temp_elem.append('<option value="'+option.val()+'" selected="selected" id="opt_'+id+'"class="selected">'+option.text()+'</option>');
+          }
         });
-        $(li).prepend(txt);
-        $(aclose).attr({
-            'class' 'closebutton',
-            'href' '#'
+        
+        element.after(temp_elem);
+        element.remove();
+        element = temp_elem;
+        
+        //public method to add new item
+        $(element).bind("addItem", function(event, data) {
+          addItem(data.title, data.value, 0, 0, 0);
         });
-        li.appendChild(aclose);
-        li.appendChild(input);
-        holder.appendChild(li);
-        $(aclose).click(function() {
-            $(this).parent('li').fadeOut('fast', function() {
-                $(this).remove();
+        
+        //public method to remove item
+        $(element).bind("removeItem", function(event, data) {
+          var item = holder.children('li[rel=' + data.value + ']');
+          if (item.length) {
+            removeItem(item);
+          }
+        });
+        
+        //public method to remove item
+        $(element).bind("destroy", function(event, data) {
+          holder.remove();
+          complete.remove();
+          element.show();
+        });
+        
+        //public method to select all items
+        $(element).bind("selectAll", function(event, data) {
+            var currVals = $(element).val() || [];
+            $.each($(element).data('cache'), function(key, value){
+                if($.inArray(key, currVals) === -1){
+                    addItem(value, key, 0, 0, 0);
+                }
             });
-            return false;
+            feed.parent().hide()
+        });
+        
+      }
+      
+      function addItem(title, value, preadded, locked, focusme) {
+        if (!maxItems()) {
+          return false;
+        }
+        var liclass = "bit-box" + (locked ? " locked": "");
+        var id = randomId();
+        var txt = document.createTextNode(xssDisplay(title));
+        var aclose = $('<a class="closebutton" href="#"></a>');
+        var li = $('<li class="'+liclass+'" rel="'+value+'" id="pt_'+id+'"></li>').prepend(txt).append(aclose);
+
+        holder.append(li);
+
+        aclose.click( function() {
+          removeItem($(this).parent("li"));
+          return false;
         });
         if (!preadded) {
-            holder.removeChild(document.getElementById('annoninput'));
-            addInput();
+          $("#" + elemid + "_annoninput").remove();
+          addInput(focusme);
+          var _item = $('<option value="'+xssDisplay(value, 1)+'" id="opt_'+id+'" class="selected" selected="selected">'+xssDisplay(title)+'</option>');
+          element.append(_item);
+          if (options.onselect) {
+            funCall(options.onselect, _item);
+          }
+          element.change();
         }
-        feed.hide();
-    }
-    var defaultFilter = function(input) {
-        if (filter.userfilter) {
-            var flag;
-            feed.children('linot([fckb])').removeClass('hidden');
-            $.each(feed.children('linot([fckb])'), function(i, val) {
-                var item = $(val);
-                if (filter.casesensetive) {
-                    flag = item.text().indexOf(input);
-                    item.html(item.text().replace(input, 'em' + input + 'em'));
-                } else {
-                    flag = item.text().toLowerCase().indexOf(input.toLowerCase());
-                    item.html(item.text().replace(input, 'em' + input + 'em'));
-                }
-                if (flag == -1) {
-                    item.addClass('hidden');
-                } else {
-                    counter++;
-                }
-            });
-        } else {
-            counter += feed.children('linot([fckb])').length;
+        holder.children("li.bit-box.deleted").removeClass("deleted");
+        clear_feed(1);
+        return id;
+      }
+
+      function removeItem(item) {
+        if (!item.hasClass('locked')) {
+          item.fadeOut("fast");
+          var id = item.attr('id');
+          if (options.onremove) {
+            var _item = id ?  $("#o" + id + "") : element.children("option[value=" + item.attr("rel") + "]");
+            funCall(options.onremove, _item);
+          }
+          if (id) {
+             $("#o" + id + "").remove();
+          } else {
+            element.children('option[value="' + item.attr("rel") + '"]').remove();
+          }
+          item.remove();
+          element.change();
+          deleting = 0;
         }
-        if (counter  height) {
-            feed.css({
-                'height' (height  24) + 'px',
-                'overflow' 'auto'
-            });
-        } else {
-            feed.css('height', 'auto');
-        }
-    }
-    var feedFilter = function(item, caption, input) {
-        if (filter.userfilter) {
-            if (filter.casesensetive) {
-                if (caption.indexOf(input) != -1) {
-                    item.html(caption.replace(input, 'em' + input + 'em'));
-                    return true;
+      }
+
+      function addInput(focusme) {
+        var li = $('<li class="bit-input" id="'+elemid + '_annoninput">');
+        var input = $('<input type="text" class="maininput" size="' + options.input_min_size + '" autocomplete="off">');
+        if (options.input_tabindex > 0) input.attr("tabindex", options.input_tabindex);
+        if (options.input_name != "") input.attr("name", options.input_name);
+
+        holder.append(li.append(input));
+
+        input.focus( function() {
+          isactive = true;
+          if (maxItems()) {
+            complete.fadeIn("fast");
+          }
+        });
+        
+        input.blur( function() {
+          isactive = false;
+          if (complete_hover) {
+            complete.fadeOut("fast");
+          } else {
+            input.focus();
+          }
+        });
+        
+        holder.click( function() {
+          if (options.input_min_size < 0 && feed.length) {
+            load_feed(xssPrevent(input.val(), 1));
+          }
+          input.focus();
+          if (feed.length && input.val().length > options.input_min_size) {
+            feed.show();
+          } else {
+            clear_feed(1);
+            complete.children(".default").show();
+          }
+        });
+        
+        input.keypress( function(event) {
+          if (event.keyCode == _key.enter) {
+            return false;
+          }
+          //auto expand input
+          var newsize = (options.input_min_size > input.val().length) ? options.input_min_size : (input.val().length + 1);
+          input.attr("size", newsize).width(parseInt(input.css('font-size')) * newsize);
+        });
+
+        input.keyup( function(event) {
+
+          var etext = xssPrevent(input.val(), 1);
+          
+          if (event.keyCode == _key.backspace && etext.length == 0) {
+            clear_feed(1);
+            if (!holder.children("li.bit-box:last").hasClass('locked')) {
+              if (holder.children("li.bit-box.deleted").length == 0) {
+                holder.children("li.bit-box:last").addClass("deleted");
+                return false;
+              } else {
+                if (deleting) {
+                  return;
                 }
-            } else {
-                if (caption.toLowerCase().indexOf(input) != -1) {
-                    item.html(caption.replace(input, 'em' + input + 'em'));
-                    return true;
-                }
-            }
-        } else {
-            item.html(caption.replace(input, 'em' + input + 'em'));
-            return true;
-        }
-    }
-    var addItemFeed = function(data, input) {
-        feed.children('li[fckb=2]').remove();
-        $.each(data, function(i, val) {
-            if (val.caption) {
-                var li = document.createElement('li');
-                $(li).attr({
-                    'rel' val.value,
-                    'fckb' '2'
+                deleting = 1;
+                holder.children("li.bit-box.deleted").fadeOut("fast", function() {
+                  removeItem($(this));
+                  return false;
                 });
-                if (feedFilter($(li), val.caption, input)) {
-                    feed.append(li);
-                    counter++;
-                }
+              }
             }
+          }
+
+          if (event.keyCode != _key.downarrow && event.keyCode != _key.uparrow && event.keyCode!= _key.leftarrow && event.keyCode!= _key.rightarrow && etext.length > options.input_min_size) {
+            load_feed(etext);
+            complete.children(".default").hide();
+            feed.show();
+          }
         });
-        defaultFilter(input);
-    }
-    var addTextItemFeed = function(value) {
-        if (newel) {
-            feed.children('li[fckb=1]').remove();
-            var li = document.createElement('li');
-            $(li).attr({
-                'rel' value,
-                'fckb' '1'
-            });
-            $(li).html(value);
-            feed.prepend(li);
+        if (options.oncreate) {
+          funCall(options.oncreate, input);
+        }
+        if (focusme) {
+          setTimeout( function() {
+            input.focus();
+            complete.children(".default").show();
+          }, 1);
+        }
+      }
+
+      function addMembers(etext, data) {
+        feed.html('');
+        if (!options.cache && data != null) {
+          cache.clear();
+        }
+        addTextItem(etext);
+        if (data != null && data.length) {
+          $.each(data, function(i, val) {
+            cache.set(xssPrevent(val.key), xssPrevent(val.value));
+          });
+        }
+        var maximum = options.maxshownitems < cache.length() ? options.maxshownitems: cache.length();
+        var content = '';
+        $.each(cache.search(etext), function (i, object) {
+          if (options.filter_selected && element.children('option[value="' + object.key + '"]').hasClass("selected")) {
+            //nothing here...
+          } else {
+            content += '<li rel="' + object.key + '">' + xssDisplay(itemIllumination(object.value, etext)) + '</li>';
             counter++;
+            maximum--;
+          }
+        });
+        feed.append(content);
+        if (options.firstselected) {
+          focuson = feed.children("li:visible:first");
+          focuson.addClass("auto-focus");
         }
-    }
-    var removeFeedEvent = function() {
-        feed.children('li').unbind('mouseover');
-        feed.children('li').unbind('mouseout');
-        feed.mousemove(function() {
-            bindFeedEvent();
-            feed.unbind('mousemove');
-        })
-    }
-    var bindFeedEvent = function() {
-        feed.children('li').mouseover(function() {
-            feed.children('li').removeClass(auto-focus);
-            $(this).addClass(auto-focus);
-            nowFocusOn = $(this);
+        
+        if (counter > options.height) {
+          feed.css({
+            "height": (options.height * 24) + "px",
+            "overflow": "auto"
+          });
+        } else {
+          feed.css("height", "auto");
+        }
+        
+        if (maxItems() && complete.is(':hidden')) {
+          complete.show();
+        }
+      }
+
+      function itemIllumination(text, etext) {
+        var string_regex_adder = options.filter_begin ? '': '(.*)';
+        var regex_result = options.filter_begin ? '<em>$1</em>$2' : '$1<em>$2</em>$3';
+        var string_regex = string_regex_adder + (options.filter_case ? "(" + etext + ")(.*)" : "(" + etext.toLowerCase() + ")(.*)");
+        try {
+          var regex = new RegExp(string_regex, ((options.filter_case) ? "g":"gi"));
+          var text = text.replace(regex, regex_result);
+        } catch(ex) {};
+        return text;
+      }
+
+      function bindFeedEvent() {
+        feed.children("li").mouseover( function() {
+          feed.children("li").removeClass("auto-focus");
+          focuson = $(this);
+          focuson.addClass("auto-focus");
         });
-        feed.children('li').mouseout(function() {
-            $(this).removeClass(auto-focus);
-            nowFocusOn = null;
+        feed.children("li").mouseout( function() {
+          $(this).removeClass("auto-focus");
+          focuson = null;
         });
-    }
-    var bindEvents = function() {
-        var maininput = $('.maininput');
+      }
+
+      function removeFeedEvent() {
+        feed.unbind("mouseover").unbind("mouseout").mousemove( function() {
+          bindFeedEvent();
+          feed.unbind("mousemove");
+        });
+      }
+
+      function bindEvents() {
+        var maininput = $("#" + elemid + "_annoninput").children(".maininput");
         bindFeedEvent();
-        feed.children('li').unbind('click');
-        feed.children('li').click(function() {
-            addItem($(this));
-            complete.hide();
+        
+        feed.children("li").unbind("mousedown").mousedown( function() {
+          var option = $(this);
+//          addItem(option.text(), option.attr("rel"), 0, 0, 1);
+          clear_feed(1);
+          complete.hide();
+          getSearch(option.attr("rel"));
+          $('.maininput').val('');
         });
-        maininput.unbind('keydown');
-        maininput.keydown(function(event) {
-            if (event.keyCode == 13 && nowFocusOn != null) {
-                addItem($(nowFocusOn));
-                complete.hide();
-                event.preventDefault();
+        
+        maininput.unbind("keydown");
+        maininput.keydown( function(event) {
+          if (event.keyCode != _key.backspace) {
+            holder.children("li.bit-box.deleted").removeClass("deleted");
+          }
+
+          if ((event.keyCode == _key.enter || event.keyCode == _key.tab || event.keyCode == _key.comma) && checkFocusOn()) {
+            var option = focuson;
+            addItem(option.text(), option.attr("rel"), 0, 0, 1);
+            return _preventDefault(event);
+          }
+
+          if ((event.keyCode == _key.enter || event.keyCode == _key.tab || event.keyCode == _key.comma) && !checkFocusOn()) {
+            if (options.newel) {
+              var value = xssPrevent($(this).val());
+              addItem(value, value, 0, 0, 1);
+              return _preventDefault(event);
             }
-            if (event.keyCode == 40) {
-                removeFeedEvent();
-                if (typeof(nowFocusOn) == 'undefined'  nowFocusOn.length == 0) {
-                    nowFocusOn = $(feed.children('livisiblefirst'));
-                    feed.get(0).scrollTop = 0;
-                } else {
-                    nowFocusOn.removeClass(auto-focus);
-                    nowFocusOn = nowFocusOn.nextAll('livisiblefirst');
-                    var prev = parseInt(nowFocusOn.prevAll('livisible').length, 10);
-                    var next = parseInt(nowFocusOn.nextAll('livisible').length, 10);
-                    if ((prev  Math.round(height  2)  next = Math.round(height  2)) && typeof(nowFocusOn.get(0)) != 'undefined') {
-                        feed.get(0).scrollTop = parseInt(nowFocusOn.get(0).scrollHeight, 10)  (prev - Math.round(height  2));
-                    }
-                }
-                feed.children('li').removeClass(auto-focus);
-                nowFocusOn.addClass(auto-focus);
+            if ((options.addontab || options.addoncomma) && options.newel) {
+              focuson = feed.children("li:visible:first");
+              var option = focuson;
+              addItem(option.text(), option.attr("rel"), 0, 0, 1);
+              return _preventDefault(event);
             }
-            if (event.keyCode == 38) {
-                removeFeedEvent();
-                if (typeof(nowFocusOn) == 'undefined'  nowFocusOn.length == 0) {
-                    nowFocusOn = $(feed.children('livisiblelast'));
-                    feed.get(0).scrollTop = parseInt(nowFocusOn.get(0).scrollHeight, 10)  (parseInt(feed.children('livisible').length, 10) - Math.round(height  2));
-                } else {
-                    nowFocusOn.removeClass(auto-focus);
-                    nowFocusOn = nowFocusOn.prevAll('livisiblefirst');
-                    var prev = parseInt(nowFocusOn.prevAll('livisible').length, 10);
-                    var next = parseInt(nowFocusOn.nextAll('livisible').length, 10);
-                    if ((next  Math.round(height  2)  prev = Math.round(height  2)) && typeof(nowFocusOn.get(0)) != 'undefined') {
-                        feed.get(0).scrollTop = parseInt(nowFocusOn.get(0).scrollHeight, 10)  (prev - Math.round(height  2));
-                    }
-                }
-                feed.children('li').removeClass(auto-focus);
-                nowFocusOn.addClass(auto-focus);
-            }
+          }
+
+          if (event.keyCode == _key.downarrow) {
+            nextItem('first');
+          }
+          if (event.keyCode == _key.uparrow) {
+            nextItem('last');
+          }
         });
-    }
-    var addInput = function() {
-        var li = document.createElement('li');
-        var input = document.createElement('input');
-        $(li).attr({
-            'class' 'bit-input',
-            'id' 'annoninput'
-        });
-        $(input).attr({
-            'type' 'text',
-            'class' 'maininput'
-        });
-        li.appendChild(input);
-        holder.appendChild(li);
-        $(input).focus(function() {
-            complete.fadeIn('fast');
-        });
-        $(holder).click(function() {
-            $(input).focus();
-            if (feed.length && $(input).val().length) {
-                feed.show();
-            } else {
-                feed.children('li[fckb=2]').remove();
-                feed.children('li').addClass('hidden');
-                feed.css('height', '0px');
-                $('.default').show();
-            }
-        });
-        $(input).keyup(function(event) {
-            if (event.keyCode != 40 && event.keyCode != 38) {
-                counter = 0;
-                var etext = $(input).val();
-                addTextItemFeed(etext);
-                if (ajax.url) {
-                    if (ajax.cache && cache.length  0) {
-                        addItemFeed(cache, etext);
-                        bindEvents();
-                    } else {
-                        $.getJSON(ajax.url + 'tag=' + etext, null, function(data) {
-                            addItemFeed(data, etext);
-                            cache = data;
-                            bindEvents();
-                        });
-                    }
-                } else {
-                    bindEvents();
-                }
-                $('.default').hide();
-                feed.show();
-            }
-        });
-    }
-    if (typeof(elem) != 'object') {
-        elem = $(elem);
-    }
-    if (typeof(list) != 'object') {
-        list = $(list);
-    }
-    if (typeof(complete) != 'object') {
-        complete = $(complete);
-    }
-    var feed = $('#feed');
-    var cache = {};
-    var counter = 0;
-    var nowFocusOn;
-    var holder = document.createElement('ul');
-    elem.css('display', 'none');
-    $(holder).attr('class', 'holder');
-    if (list && list.children('li').length) {
-        $.each(list.children('li'), function(i, val) {
-            addItem($(list.children('li')[i]), 1);
-        });
-    }
-    addInput();
-    elem.before(holder);
-    $(document).click(function(event) {
-        if ($(event.target).attr('class') != 'holder' && $(event.target).attr('class') != 'maininput') {
-            $('.default').hide();
-            $(feed).hide();
+      }
+      
+      function nextItem(position) {
+        removeFeedEvent();
+        if (focuson == null || focuson.length == 0) {
+          focuson = feed.children("li:visible:" + position);
+          feed.get(0).scrollTop = position == 'first' ? 0 : parseInt(focuson.get(0).scrollHeight, 10) * (parseInt(feed.children("li:visible").length, 10) - Math.round(options.height / 2));
+        } else {
+          focuson.removeClass("auto-focus");
+          focuson = position == 'first' ? focuson.nextAll("li:visible:first") : focuson.prevAll("li:visible:first");
+          var prev = parseInt(focuson.prevAll("li:visible").length, 10);
+          var next = parseInt(focuson.nextAll("li:visible").length, 10);
+          if (((position == 'first' ? prev : next) > Math.round(options.height / 2) || (position == 'first' ? prev : next) <= Math.round(options.height / 2)) && typeof(focuson.get(0)) != "undefined") {
+            feed.get(0).scrollTop = parseInt(focuson.get(0).scrollHeight, 10) * (prev - Math.round(options.height / 2));
+          }
         }
+        feed.children("li").removeClass("auto-focus");
+        focuson.addClass("auto-focus");
+      }
+      
+      function _preventDefault(event) {
+        complete.hide();
+        event.preventDefault();
+        focuson = null;
+        return false;
+      }
+
+      function maxItems() {
+          return options.maxitems != 0 && (holder.children("li.bit-box").length < options.maxitems);
+      }
+
+      function addTextItem(value) {
+        if (options.newel && maxItems()) {
+          feed.children("li[fckb=1]").remove();
+          if (value.length == 0) {
+            return;
+          }
+          var li = $('<li rel="'+value+'" fckb="1">').html(xssDisplay(value));
+          feed.prepend(li);
+          counter++;
+        }
+        return;
+      }
+
+      function funCall(func, item) {
+        var _object = {};
+        for (i = 0; i < item.get(0).attributes.length; i++) {
+          if (item.get(0).attributes[i].nodeValue != null) {
+            _object["_" + item.get(0).attributes[i].nodeName] = item.get(0).attributes[i].nodeValue;
+          }
+        }
+        return func.call(func, _object);
+      }
+
+      function checkFocusOn() {
+        if (focuson == null || focuson.length == 0) {
+          return false;
+        }
+        return true;
+      }
+      
+      function xssPrevent(string, flag) {
+        if (typeof flag != "undefined") {
+          for(i = 0; i < string.length; i++) {
+            var charcode = string.charCodeAt(i);
+            if ((_key.exclamation <= charcode && charcode <= _key.slash) ||
+                (_key.colon <= charcode && charcode <= _key.at) ||
+                (_key.squarebricket_left <= charcode && charcode <= _key.apostrof)) {
+              string = string.replace(string[i], escape(string[i]));
+            }
+          }
+          string = string.replace(/(\{|\}|\*)/i, "\\$1");
+        }
+        return string.replace(/script(.*)/g, "");
+      }
+      
+      function xssDisplay(string, flag) {
+        string = string.toString();
+        string = string.replace('\\', "");
+        if (typeof flag != "undefined") {
+          return string;
+        }
+        return unescape(string);
+      }
+      
+      function clear_feed(flag) {
+        feed.children().remove();
+        if (flag) {
+          feed.hide();
+        }
+      }
+
+      function load_feed(etext){
+        counter = 0;
+        if (options.json_url && maxItems()) {
+          if (options.cache && json_cache_object.get(etext)) {
+            addMembers(etext);
+            bindEvents();
+          } else {
+            getBoxTimeout++;
+            var getBoxTimeoutValue = getBoxTimeout;
+            setTimeout( function() {
+              if (getBoxTimeoutValue != getBoxTimeout) return;
+              $.getJSON(options.json_url, {"tag": xssDisplay(etext)}, function(data) {
+                if (!isactive) return; // prevents opening the selection again after the focus is already off
+                addMembers(etext, data);
+                json_cache_object.set(etext, 1);
+                bindEvents();
+              });
+            }, options.delay);
+          }
+        } else {
+          addMembers(etext);
+          bindEvents();
+        }
+      }
+
+      var options = $.extend({
+        json_url: null,
+        width: 512,
+        cache: false,
+        height: "10",
+        newel: false,
+        addontab: false,
+        addoncomma: false,
+        firstselected: false,
+        filter_case: false,
+        filter_selected: false,
+        filter_begin: false,
+        complete_text: "Start to type...",
+        select_all_text:  null,
+        maxshownitems: 30,
+        maxitems: 10,
+        oncreate: null,
+        onselect: null,
+        onremove: null,
+        attachto: null,
+        delay: 350,
+        input_tabindex: 0,
+        input_min_size: 1,
+        input_name: "",
+        bricket: true
+      },
+      opt);
+
+      //system variables
+      var holder = null;
+      var feed = null;
+      var complete = null;
+      var counter = 0;
+      
+      var isactive = false;
+      var focuson = null;
+      var deleting = 0;
+      var complete_hover = 1;
+
+      var element = $(this);
+      var elemid = element.attr("id");
+      var getBoxTimeout = 0;
+      
+      var json_cache_object = {
+        'set': function (id, val) {
+          var data = element.data("jsoncache");
+          data[id] = val;
+          element.data("jsoncache", data);
+        },
+        'get': function(id) {
+          return element.data("jsoncache")[id] != 'undefined' ? element.data("jsoncache")[id] : null;
+        },
+        'init' : function () {
+          element.data("jsoncache", {});
+        }
+      };
+      
+      var _key = { 'enter': 13,
+                   'tab': 9,
+                   'comma': 188,
+                   'backspace': 8,
+                   'leftarrow': 37,
+                   'uparrow': 38,
+                   'rightarrow': 39,
+                   'downarrow': 40,
+                   'exclamation': 33,
+                   'slash': 47,
+                   'colon': 58,
+                   'at': 64,
+                   'squarebricket_left': 91,
+                   'apostrof': 96
+                 };
+      
+      var randomId = function() {
+        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+        var randomstring = '';
+        for (var i = 0; i < 32; i++) {
+            var rnum = Math.floor(Math.random() * chars.length);
+            randomstring += chars.substring(rnum, rnum + 1);
+        }
+        return randomstring;
+      };
+      
+      var cache = {
+        'search': function (text, callback) {
+          var temp = new Array();
+          var regex = new RegExp((options.filter_begin ? '^' : '') + text, (options.filter_case ? "g": "gi"));
+          $.each(element.data("cache"), function (i, _elem) {
+            if (typeof _elem.search === 'function') {
+              if (_elem.search(regex) != -1) {
+                temp.push({'key': i, 'value': _elem});
+              }
+            }
+          });
+          return temp;
+        },
+        'set': function (id, val) {
+          var data = element.data("cache");
+          data[id] = val;
+          element.data("cache", data);
+        },
+        'get': function(id) {
+          return element.data("cache")[id] != 'undefined' ? element.data("cache")[id] : null;
+        },
+        'clear': function() {
+          element.data("cache", {});
+        },
+        'length': function() {
+          return element.data("cache").length;
+        },
+        'init': function () {
+          if (element.data("cache") == 'undefined') {
+            element.data("cache", {});
+          }
+        }
+      };
+      
+      //initialization
+      init();
+      
+      //cache initialization
+      json_cache_object.init();
+      cache.init();
+      
+      return this;
     });
-}
+  };
+})(jQuery);

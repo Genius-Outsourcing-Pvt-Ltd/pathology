@@ -83,7 +83,22 @@ class Admin_AdminController extends Zend_Controller_Action {
             echo json_encode($erro_data);
             die();
     }
-
+    public function searchAction(){
+        $tag = $this->_request->getParam('tag',0);
+        $pat_obj = new Application_Model_Patient();
+        $result = $pat_obj->search($tag);
+        header('Content-type: application/json');
+        echo json_encode($result);
+        die();
+    }
+    public function getpatientAction(){
+        $id = $this->_request->getParam('id',0);
+         $pat_obj = new Application_Model_Patient();
+         $patient = $pat_obj->getById($id);
+            header('Content-type: application/json');
+        echo json_encode($patient);
+        die();
+    }
     public function manageuserAction() {
         $model = new Application_Model_User();
         $select = $model->getallUser();
