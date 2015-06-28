@@ -55,8 +55,7 @@ class Admin_AdminController extends Zend_Controller_Action {
         $result = $this->getRequest()->getParam('result', '');
         $orderId = $this->getRequest()->getParam('orderId', '');
         if(!empty($testId) && !empty($result)){
-            $orderTest = new Application_Model_DbTable_OrderTests();
-            $orderTest->update(['results'=>$result], "test_id=$testId AND order_id=$orderId");
+            patient::saveTestResult($result, $orderId, $testId);
             echo json_encode(['response'=>'success']);
             die;
         }
