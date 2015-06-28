@@ -30,7 +30,11 @@
                     </p>
                     <br/>
                     <p>
-                    <ul> <li> <select></select> </li> <li> <a>Delete</a></li> </ul>
+                    <ul> <li> <select><option value ="">Select</option>
+                            <?php foreach($this->tests as $test){ ?>
+                                <option value ="<?php echo $test['id'] ?>"><?php echo $test['name'] ?></option>
+                            <?php } ?>
+                            </select> </li> <li> <a>Delete</a></li> </ul>
                     </p>
                </article>
                 

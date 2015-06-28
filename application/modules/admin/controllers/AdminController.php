@@ -28,11 +28,16 @@ class Admin_AdminController extends Zend_Controller_Action {
                 $form = new Zend_Form($forms->orders->adduser);
                 $this->view->form = $form;
                 
+                $testObj = new Application_Model_Test();
+                $tests = $testObj->getAll();
+                $this->view->tests = $tests;
+             
+                
             }else{
-                $this->_redirect('dashboard');
+                $this->_redirect('patient/orders');
             }
         }else{
-            $this->_redirect('dashboard');
+            $this->_redirect('patient/orders');
         }
     }
 
