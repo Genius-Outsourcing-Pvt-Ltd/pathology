@@ -8,7 +8,7 @@
                     $usertype = $userObj['user_type'];
                     ?>
                 <ul>
-                    <li><a href="#">Home</a></li>
+                    <li><a href="<?php echo $this->url(array(), 'patient_orders', true); ?>">Home</a></li>
                     <?php if($usertype == 'operator'){ ?>
                     <li><a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'orders'), 'orders', true); ?>">Orders</a></li>
                     <?php } ?>
@@ -20,11 +20,7 @@
     <section class="notfy-panel">
         <div class="notfy-inner">
             <div class="user_info">
-                <p class="thumb"><img src="images/user_img.png" width="103" height="103" /></p>
-                <p class="welcome-txt"> <span>Welcome</span> <span class="name"><a href="#">Amy Admin</a><i></i></span> </p>
-            </div>
-            <div class="msg_panel">
-                <a href="#" class="notify"><i class="icons"></i> Notifications ( <span>5</span> )</a>
+                <p class="welcome-txt"> <span>Welcome</span> <span class="name"><a href="javascript:void(0)"><?php echo $userObj['first_name']. ' '. $userObj['last_name']?></a><i></i></span> </p>
             </div>
             <div class="clr"></div>
         </div>
