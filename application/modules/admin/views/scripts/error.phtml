@@ -1,9 +1,5 @@
 <?php if ($this->form->isErrors()): ?>
     <div class="error" >
-        <h4>Please enter the information to continue.</h4>
-         <br />
-        <hr />
-        <br />
         <ul>
             <?php
             foreach ($this->form->getMessages() as $messages) {
@@ -20,7 +16,9 @@
         </ul>
     </div>
 
-<?php endif; ?>
+    <h4>Please enter the information to continue.</h4>
+
+            <?php endif; ?>
 <!--<div class="clr" style="margin: 13px;"></div>-->
 
 
