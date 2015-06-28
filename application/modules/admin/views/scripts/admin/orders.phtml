@@ -2,22 +2,22 @@
              	<h3><i class="up_mark icons"></i><i class="side_mark"></i>Patient Information</h3>
                 
                 <article class="left w560">
-                	<p><label class="mt0">Search Patient</label><span><input name="" type="text" class="create_inpt" /></span></p>
+                	<p><label class="mt0">Search Patient</label><span><input name="" type="text" class="create_inpt" tabIndex="1" /></span></p>
                     <p><label class="mt12">First Name</label><span><?php echo $this->form->first_name ?></span></p>
-                    <p><label class="mt12">Phone</label><span><input name="" type="text" class="create_inpt" /></span></p>
-                    <p><label class="mt12">Birthday</label><span><input name="" type="text" class="create_inpt" /></span></p>
-                    <p><label class="mt12">Email</label><span><input name="" type="text" class="create_inpt" /></span></p>
+                    <p><label class="mt12">Phone</label><span><?php echo $this->form->phone ?></span></p>
+                    <p><label class="mt12">Birthday</label><span><?php echo $this->form->birthday ?></span></p>
+                    <p><label class="mt12">Email</label><span><?php echo $this->form->email ?></span></p>
                 </article>
                 <article class="left w560 mL52">
                     <p style="margin-top: 22px"><label>&nbsp;</label><span class="pL25">&nbsp; </span></p>
-                    <p><label class="mt12">Last Name</label><span><input name="" type="text" class="create_inpt" /></span></p>
-                    <p><label class="mt12">Address</label><span><input name="" type="text" class="create_inpt" /></span></p>
+                    <p><label class="mt12">Last Name</label><span><?php echo $this->form->last_name ?></span></p>
+                    <p><label class="mt12">Address</label><span><?php echo $this->form->address ?></span></p>
                     <p><label class="mt12">Sex</label>
-                    <div class="wrapper-demo mL0 mt10">
-                        <select>abc</select>
-                      ​</div>
+                    <!--<div class="wrapper-demo mL0 mt10">-->
+                        <?php echo $this->form->sex ?>
+                      <!--​</div>-->
                     </p>
-                     <p><label class="mt12">M.R.N.No.</label><span><input name="" type="text" class="create_inpt" /></span></p>
+                     <p><label class="mt12">M.R.N.No.</label><span><?php echo $this->form->mrn ?></span></p>
                 </article>
                <div class="clr"></div>  
              </div>
