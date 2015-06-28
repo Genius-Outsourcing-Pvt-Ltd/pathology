@@ -11,7 +11,6 @@
                     <li><a href="#">Home</a></li>
                     <?php if($usertype == 'operator'){ ?>
                     <li><a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'orders'), 'orders', true); ?>">Orders</a></li>
-                    <li ><a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'index'), 'patient_orders', true); ?>">Results</a></li>
                     <?php } ?>
                     <li class="mR0"><a href="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'logout'), 'default', true); ?>">Logout</a></li>
                 </ul>

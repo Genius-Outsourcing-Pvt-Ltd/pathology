@@ -41,7 +41,7 @@
       }
 
       function createFCBK() {
-        holder = $('<ul class="holder"></ul>').width(options.width);
+        holder = $('<ul class="holder" tabindex="0"></ul>').width(options.width);
         if (options.attachto) {
           if (typeof(options.attachto) == "object") {
             options.attachto.append(holder);
