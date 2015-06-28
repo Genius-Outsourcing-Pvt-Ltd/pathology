@@ -1,3 +1,11 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<style>
+    body {
+	font-family: "Trebuchet MS", "Helvetica", "Arial",  "Verdana", "sans-serif";
+	font-size: 62.5%;
+}
+</style>
 <section class="msgs_box">
     <div class="msgs_links">
         <h1>Admin Panel</h1>
@@ -82,7 +90,9 @@
           }
     });
     })
-    
+    $(function() {
+        $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+    });
     
      
     </script>
