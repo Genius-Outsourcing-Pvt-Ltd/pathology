@@ -7,6 +7,31 @@
         <div class="tab_panel">
             <h3>My Dashboard</h3>
             <div class="clr"></div>
+            <div class="data_listing">
+                <div class="data_listing_header">
+                    <p class="heading_1 w230">Name</p>
+                    <p class="heading_1 w190 pL20">Order</p>
+                    <p class="heading_1 w190">Total Test</p>
+                    <p class="heading_1 w190">Calculated Tests</p>
+                    <p class="heading_1 w190">Created At</p>
+                    <div class="clr"></div>
+                </div>
+                <div class="clr"></div>
+                <?php foreach($this->patients as $patient){ ?>
+                    <ul>
+                        <li class="w230 pL25"><?php echo $patient['name']; ?></li>
+                        <li class="w190 pL15"><?php echo $patient['order_id']; ?></li>
+                        <li class="w190 pL22"><?php echo $patient['total_tests']; ?></li>
+                        <li class="w190 pL15"><?php echo $patient['total_results_calculated']; ?></li>
+                        <li class="w190 pL16"><?php echo date('m-d-Y', strtotime($patient['created_at'])); ?></li>
+                        <li class="last w80">
+                            <a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'vieworder', 'id'=>$patient['id']), 'default', true); ?>"><i class="icons eye"></i></a>
+                        </li>
+                    </ul>
+                <?php } ?>
+                <div class="clr"></div>
+            </div>
+            <div class="clr"></div>
         </div>
 
         <div class="clr"></div>

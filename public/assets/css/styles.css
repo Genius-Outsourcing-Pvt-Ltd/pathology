@@ -3713,7 +3713,12 @@ section .data_listing ul li {
   background-color: transparent !important;
   border: none !important;
   line-height: 40px;
-  border-right: #efefef solid 1px !important; }
+  border-right: #efefef solid 1px !important;
+  border-left: #e6e7e8 solid 1px;
+  border-top: #e6e7e8 solid 5px;
+  list-style-type: none;
+  float: left;
+  margin-right: 5px;}
 
 section .data_listing ul li.last {
   border-right: #ffffff solid 1px !important; }
@@ -7117,6 +7122,8 @@ section .data_listing_header p.heading_1 {
 section .data_listing ul {
   margin: 0px;
   padding: 0px; }
+
+section .data_listing ul:nth-child(odd) {background-color: #f6f8fa; }
 
 section .data_listing ul li div.actions {
   display: none; }

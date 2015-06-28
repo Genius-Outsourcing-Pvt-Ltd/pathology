@@ -1,0 +1,31 @@
+<?php if ($this->form->isErrors()): ?>
+    <div class="error" >
+        <h4>Please enter the information to continue.</h4>
+         <br />
+        <hr />
+        <br />
+        <ul>
+            <?php
+            foreach ($this->form->getMessages() as $messages) {
+                if (is_array($messages)) {
+                    foreach ($messages as $message) {
+                        echo "<li>$message</li>";
+                        break;
+                    }
+                } else {
+                    echo "<li>$messages</li>";
+                }
+            }
+            ?>
+        </ul>
+    </div>
+
+<?php endif; ?>
+<!--<div class="clr" style="margin: 13px;"></div>-->
+
+
+
+
+
+
+

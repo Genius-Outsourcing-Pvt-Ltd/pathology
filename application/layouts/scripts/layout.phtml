@@ -21,5 +21,15 @@
             <?php echo $this->render('partials/_footer.phtml') ?>
             <div class="clr"></div>
         </div>
+        <div class="userSuccMSG"></div>
     </body>
 </html>
+<script>
+function showMsg(msg){
+    $('.userSuccMSG').html(msg);
+    $('.userSuccMSG').css('display','block');
+    $('.userSuccMSG').css("top", 320 + "px");
+    $('.userSuccMSG').css("left", (($(window).width()/2-$('.userSuccMSG').width()/2)-38) + "px");
+    $('.userSuccMSG').fadeOut(4000);
+}
+</script>
