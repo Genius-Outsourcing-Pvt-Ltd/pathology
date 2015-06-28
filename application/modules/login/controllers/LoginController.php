@@ -17,8 +17,6 @@ class Login_LoginController extends Zend_Controller_Action {
         $forms = Zend_Registry::get('forms');
         $form = new Zend_Form($forms->user->login);
         $userManagement = new Application_Model_User();
-        $auth = Zend_Auth::getInstance();
-        $auth->setStorage(new Zend_Auth_Storage_Session('user'));
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
             
@@ -36,6 +34,9 @@ class Login_LoginController extends Zend_Controller_Action {
                         if ($userExits['id'] == 0 || $userExits['id'] == '') {
                             $magUser = true;
                         }
+                        $session = new Zend_Session_Namespace('userObj');
+                        $session->__set('userObj', $userExits);
+                        
                     }
 
                     if ($magUser) {

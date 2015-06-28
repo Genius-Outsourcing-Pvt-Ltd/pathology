@@ -3,11 +3,17 @@
         <div class="bg">
             <div class="wrapper">
                 <div class="logo"></div>
+                <?php $session = new Zend_Session_Namespace('userObj');
+            $userObj = $session->__get('userObj');
+            $usertype = $userObj['user_type'];
+            ?>
                 <ul>
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">Orders</a></li>
-                    <li class="mR0"><a href="#">Results</a></li>
-                    <li><a href="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'logout'), 'default', true); ?>">Logout</a></li>
+                    <?php if($usertype == 'operator'){ ?>
+                    <li><a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'orders'), 'orders', true); ?>">Orders</a></li>
+                    <li ><a href="">Results</a></li>
+                    <?php } ?>
+                    <li class="mR0"><a href="<?php echo $this->url(array('module' => 'login', 'controller' => 'login', 'action' => 'logout'), 'default', true); ?>">Logout</a></li>
                 </ul>
             </div>
         </div>

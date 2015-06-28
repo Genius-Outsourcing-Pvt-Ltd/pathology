@@ -5,6 +5,9 @@
         <title>Pathology</title>
         <link href="<?php echo $this->baseUrl('assets/css/styles.css'); ?>" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="<?php echo $this->baseUrl('assets/js/jquery-1.11.3.min.js'); ?>"></script>
+        <script>
+            
+        </script>
     </head>
     <body>
         <div class="container">
@@ -24,12 +27,3 @@
         <div class="userSuccMSG"></div>
     </body>
 </html>
-<script>
-function showMsg(msg){
-    $('.userSuccMSG').html(msg);
-    $('.userSuccMSG').css('display','block');
-    $('.userSuccMSG').css("top", 320 + "px");
-    $('.userSuccMSG').css("left", (($(window).width()/2-$('.userSuccMSG').width()/2)-38) + "px");
-    $('.userSuccMSG').fadeOut(4000);
-}
-</script>
