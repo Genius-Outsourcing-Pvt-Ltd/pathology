@@ -7,7 +7,7 @@
         <div class="tab_panel">
             <h3>View Order</h3>
             <?php if($this->userType == 'patient'){?>
-                    <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf'), 'downloadPdf', true); ?>" class="compse_btn">Download PDF</a>
+                    <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf','id'=>$this->patient[0]['userId']), 'downloadPdf', true); ?>" class="compse_btn">Download PDF</a>
             <?php } ?>
             <a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'index'), 'patient_orders', true); ?>" class="compse_btn">Back</a>
             <div class="clr"></div>
