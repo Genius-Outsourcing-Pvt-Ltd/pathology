@@ -26,7 +26,7 @@ class Admin_AdminController extends Zend_Controller_Action {
     
     public function vieworderAction() {
         $id = $this->getRequest()->getParam('id', '');
-        $patient = patient::getPatientById($id);
+        $patient = patient::getOrderById($id);
 //        echo '<pre>'; print_r($patient); die;
         $this->view->userType = $this->userObj['user_type'];
         $this->view->patient = $patient;
