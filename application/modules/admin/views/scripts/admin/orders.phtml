@@ -4,8 +4,8 @@
         <div class="clr"></div>
     </div>
     <form class="frm-patient">
-        <input name="id" type="text" class="id"></input>
-        <input name="order_id" type="text" class="order_id"></input>
+        <input name="id" type="hidden" class="id"></input>
+        <input name="order_id" type="hidden" class="order_id"></input>
     <section class="drop_downs no-bdr">
         <div class="tab_gen_info pb38">
             <h3><i class="up_mark icons"></i><i class="side_mark"></i>Patient Information</h3>
@@ -18,8 +18,9 @@
                 <p><label class="mt12">Email</label><span><?php echo $this->form->email ?></span></p>
             </article>
             <article class="left w560 mL52">
-                <p style="margin-top: 22px"><label>&nbsp;</label><span class="pL25">&nbsp; </span></p>
-                <p><label class="mt12">Last Name</label><span><?php echo $this->form->last_name ?></span></p>
+                <!--<p style="margin-top: 22px"><label>&nbsp;</label><span class="pL25">&nbsp; </span></p>-->
+                <p style="margin-top: 12px"><label>Patient ID</label><span class="pL25 id"></span></p>
+                <p class="mt20"><label >Last Name</label><span><?php echo $this->form->last_name ?></span></p>
                 <p><label class="mt12">Address</label><span><?php echo $this->form->address ?></span></p>
                 <p><label class="mt12">Sex</label>
                     <!--<div class="wrapper-demo mL0 mt10">-->
@@ -40,6 +41,7 @@
                         <a href="javascript:void(0)" class="mt0 add-test">Add Test</a>
                     </p>
                     <br/>-->
+                    <p style="margin-top: 12px"><label>Order ID</label><span class="pL25 order-id"></span></p>
                     <p class="tests">
                         <?php foreach($this->tests as $test){ ?>
                                 <ul class="test clr"> 
@@ -73,31 +75,15 @@
             {
                $('.id').val(data.id);
                $('.order_id').val(data.order_id);
-               console.log(data.messages)
-               console.log(data.id);
-               console.log(data.order_id)
+               $('.id').text(data.id);
+               $('.order-id').text(data.order_id);
+
                showMsg(data.messages);
           }
     });
     })
     
     
-     $('.add-test').click(function(){
-        console.log('its here')
-                html = '<ul class="test clr"> <li style="list-style:none; float:left" class="mL52">  <select><option name ="tests[]" value ="">Select</option>';
-                            <?php foreach($this->tests as $test){ ?>
-                              html += '<option value ="'+'<?php echo $test['id'] ?>"><?php echo $test['name'] ?>'+'</option>';
-                            <?php } ?>
-                            html += '</select> </li> <li style="list-style:none; float:left" class="mL20 delete"> <a href="javascript:void(0)">Delete</a></li></ul>';
-                   console.log(html);
-        
-        $('.tests').append(
-                   html            
-                );
-     })
-    $( document ).on( "click", ".delete", function( event ) {
-        $(this).closest('ul').remove();
-});  
-
+     
     </script>
 

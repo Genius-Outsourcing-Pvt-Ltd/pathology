@@ -75,36 +75,45 @@ class Application_Model_Patient extends Application_Model_DbTable_Patient {
             $patientObj->insert($patient_data);
         }
            $result['id'] = $user_id;
-           $patient_orders_obj = new Application_Model_DbTable_PatientOrders();
-           if(empty($dataPosted['order_id'])){
-               $dataOrder['user_id'] = $user_id;
-               $dataOrder['created_at'] = date('Y-m-d H:i:s');
-               $dataOrder['total_tests'] = count($dataPosted['test_id']);
-               $order_id = $patient_orders_obj->insert($dataOrder);
-           }else{
-               $order_id = $dataPosted['order_id'];
-               $dataOrder['total_tests'] = count($dataPosted['test_id']);
-               $patient_orders_obj->update($dataOrder);
+           $result['order_id'] = '';
+           // Save patient Tests
+
+            $patient_orders_obj = new Application_Model_DbTable_PatientOrders();
+            if(isset($dataPosted['test_id'])){
+                $testIds = $dataPosted['test_id'];
+            }else{
+                $testIds = [];
+            }
+           if(!empty($dataPosted['order_id']) || count($testIds) ){
+                if(empty($dataPosted['order_id'])){
+                    $dataOrder['user_id'] = $user_id;
+                    $dataOrder['created_at'] = date('Y-m-d H:i:s');
+                    $dataOrder['total_tests'] = count($testIds);
+                    $order_id = $patient_orders_obj->insert($dataOrder);
+                }else{
+                    $order_id = $dataPosted['order_id'];
+                    $dataOrder['total_tests'] = count($testIds);
+                    $patient_orders_obj->update($dataOrder, 'id = '.$order_id);
+                }
+                 $result['order_id'] = $order_id;
+                // Delete the deleted tests
+                $OrderTestsObj = new Application_Model_DbTable_OrderTests();
+                $oldTests = $OrderTestsObj->fetchAll('order_id = '.$order_id);
+                $oldTestsArr = [];
+                foreach($oldTests as $oldTest){
+                    if(!in_array($oldTest['test_id'],$testIds )){
+                        $OrderTestsObj->delete('test_id = '.$oldTest['test_id'].' and order_id = '.$order_id );
+                    }
+                    $oldTestsArr[] = $oldTest['test_id'];
+                }
+                // Add new tests
+                foreach($testIds as $newTest){
+                    if(!in_array($newTest,$oldTestsArr )){
+                        $OrderTestsObj->insert(['test_id' =>$newTest, 'order_id'=>$order_id] );
+                    }
+                }
            }
-            $result['order_id'] = $order_id;
-           // Delete the deleted tests
-           $OrderTestsObj = new Application_Model_DbTable_OrderTests();
-           $oldTests = $OrderTestsObj->fetchAll('order_id = '.$order_id);
-           $oldTestsArr = [];
-           foreach($oldTests as $oldTest){
-               if(!in_array($oldTest['test_id'],$dataPosted['test_id'] )){
-                   $OrderTestsObj->delete('test_id = '.$oldTest['test_id'].' and order_id = '.$order_id );
-               }
-               $oldTestsArr[] = $oldTest['test_id'];
-           }
-           // Add new tests
-           foreach($dataPosted['test_id'] as $newTest){
-               if(!in_array($newTest,$oldTestsArr )){
-                   $OrderTestsObj->insert(['test_id' =>$newTest, 'order_id'=>$order_id] );
-               }
-           }
-           
-//           print_r(count($dataPosted['test_id']));
+
            return $result;
         
     }
