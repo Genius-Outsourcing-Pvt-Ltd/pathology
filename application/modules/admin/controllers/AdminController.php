@@ -2,9 +2,25 @@
 use Application_Model_Patient as patient;
 class Admin_AdminController extends Zend_Controller_Action {
 
+    public $userObj;
+    public function init() {
+        parent::init();
+        $auth = Zend_Auth::getInstance();
+        $auth->setStorage(new Zend_Auth_Storage_Session('user')); 
+        if (!$auth->hasIdentity()) {
+             $this->_redirect('/');
+        }
+        $session = new Zend_Session_Namespace('userObj');
+        $this->userObj = $session->__get('userObj');
+    }
     public function indexAction() {
         $model = new Application_Model_Patient();
-        $patients = $model->getAllPatient();
+        $id = 0;
+        if($this->userObj['user_type'] == 'patient'){
+            $id = $this->userObj['id'];
+        }
+        $patients = $model->getAllPatient($id);
+//        print_r($patients); die;
         $this->view->patients = $patients;
     }
     
@@ -12,6 +28,7 @@ class Admin_AdminController extends Zend_Controller_Action {
         $id = $this->getRequest()->getParam('id', '');
         $patient = patient::getPatientById($id);
 //        echo '<pre>'; print_r($patient); die;
+        $this->view->userType = $this->userObj['user_type'];
         $this->view->patient = $patient;
         }
     public function ordersAction(){

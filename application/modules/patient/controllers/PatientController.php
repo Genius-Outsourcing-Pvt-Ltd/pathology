@@ -1,8 +1,12 @@
 <?php
 
-class Admin_PatientController extends Zend_Controller_Action {
+class Patient_PatientController extends Zend_Controller_Action {
 
     public function indexAction() {
+        
+    }
+
+    public function viewreportAction() {
         
     }
 

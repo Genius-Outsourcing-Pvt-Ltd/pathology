@@ -4,9 +4,9 @@
             <div class="wrapper">
                 <div class="logo"></div>
                 <?php $session = new Zend_Session_Namespace('userObj');
-            $userObj = $session->__get('userObj');
-            $usertype = $userObj['user_type'];
-            ?>
+                    $userObj = $session->__get('userObj');
+                    $usertype = $userObj['user_type'];
+                    ?>
                 <ul>
                     <li><a href="#">Home</a></li>
                     <?php if($usertype == 'operator'){ ?>
