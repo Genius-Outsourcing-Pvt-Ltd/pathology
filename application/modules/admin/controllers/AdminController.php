@@ -45,12 +45,43 @@ class Admin_AdminController extends Zend_Controller_Action {
                 $form = new Zend_Form($forms->orders->adduser);
                 $this->view->form = $form;
                 
+                $testObj = new Application_Model_Test();
+                $tests = $testObj->getAll();
+                $this->view->tests = $tests;
+             
+                
             }else{
-                $this->_redirect('dashboard');
+                $this->_redirect('patient/orders');
             }
         }else{
-            $this->_redirect('dashboard');
+            $this->_redirect('patient/orders');
         }
+    }
+    
+    public function postorderAction(){
+        $data = $this->getRequest()->getPost();
+        $forms = Zend_Registry::get('forms');
+        $form = new Zend_Form($forms->orders->adduser);
+        if($form->isValid($data)){
+            $patient = new Application_Model_Patient();
+            $result = $patient->save($data);
+            $erro_data['id'] = $result['id'];
+            $erro_data['order_id'] = $result['order_id'];
+            $erro_data['messages'] = ' Successfully saved';
+
+        }else{
+            $erro_data['id'] = $this->_request->getParam('id',0);
+            $erro_data['order_id'] = $this->_request->getParam('order_id',0);
+            $erro_data['messages'] = '';
+             $messages = $form->getMessages();
+             foreach($messages as $row){
+                $erro_data['messages'].= ((is_array($row))?(current ($row)) : $row).' ' ;
+            }
+
+        }
+            header('Content-type: application/json');
+            echo json_encode($erro_data);
+            die();
     }
 
     public function manageuserAction() {

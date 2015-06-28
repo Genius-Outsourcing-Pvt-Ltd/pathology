@@ -10,7 +10,7 @@ class Login_LoginController extends Zend_Controller_Action {
         $auth = Zend_Auth::getInstance();
         $auth->setStorage(new Zend_Auth_Storage_Session('user'));
         if ($auth->hasIdentity()) {
-            $this->_redirect('dashboard');
+            $this->_redirect('patient/orders');
         }
         
         $this->_helper->layout->setLayout('login');
@@ -47,7 +47,7 @@ class Login_LoginController extends Zend_Controller_Action {
                         $response = $userManagement->login($userName, md5($password), $remember);
                     }
                     if ($response == 'success') {
-                       $this->_redirect('dashboard');
+                       $this->_redirect('patient/orders');
                     } else {
                         $form->username->setErrors(array(
                             'Invalid username or password'

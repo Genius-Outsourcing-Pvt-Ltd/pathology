@@ -1,8 +1,19 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<style>
+    body {
+	font-family: "Trebuchet MS", "Helvetica", "Arial",  "Verdana", "sans-serif";
+	font-size: 62.5%;
+}
+</style>
 <section class="msgs_box">
     <div class="msgs_links">
         <h1>Admin Panel</h1>
         <div class="clr"></div>
     </div>
+    <form class="frm-patient">
+        <input name="id" type="hidden" class="id"></input>
+        <input name="order_id" type="hidden" class="order_id"></input>
     <section class="drop_downs no-bdr">
         <div class="tab_gen_info pb38">
             <h3><i class="up_mark icons"></i><i class="side_mark"></i>Patient Information</h3>
@@ -10,39 +21,77 @@
             <article class="left w560">
                 <p><label class="mt0">Search Patient</label><span><input name="" type="text" class="create_inpt" tabIndex="1" /></span></p>
                 <p><label class="mt12">First Name</label><span><?php echo $this->form->first_name ?></span></p>
-                <p><label class="mt12">Phone</label><span><?php echo $this->form->phone ?></span></p>
+                <p><label class="mt12">Phone</label><span><?php echo $this->form->phone_number ?></span></p>
                 <p><label class="mt12">Birthday</label><span><?php echo $this->form->birthday ?></span></p>
                 <p><label class="mt12">Email</label><span><?php echo $this->form->email ?></span></p>
             </article>
             <article class="left w560 mL52">
-                <p style="margin-top: 22px"><label>&nbsp;</label><span class="pL25">&nbsp; </span></p>
-                <p><label class="mt12">Last Name</label><span><?php echo $this->form->last_name ?></span></p>
+                <!--<p style="margin-top: 22px"><label>&nbsp;</label><span class="pL25">&nbsp; </span></p>-->
+                <p style="margin-top: 12px"><label>Patient ID</label><span class="pL25 id"></span></p>
+                <p class="mt20"><label >Last Name</label><span><?php echo $this->form->last_name ?></span></p>
                 <p><label class="mt12">Address</label><span><?php echo $this->form->address ?></span></p>
                 <p><label class="mt12">Sex</label>
                     <!--<div class="wrapper-demo mL0 mt10">-->
                     <?php echo $this->form->sex ?>
                     <!--​</div>-->
                 </p>
-                <p><label class="mt12">M.R.N.No.</label><span><?php echo $this->form->mrn ?></span></p>
+                <p><label class="mt12">M.R.N.No.</label><span><?php echo $this->form->m_r_no ?></span></p>
             </article>
             <div class="clr"></div>  
         </div>
 
-        <div class="tab_gen_info pb38">
-            <h3><i class="up_mark icons"></i><i class="side_mark"></i>Test Information</h3>
-            <article class="left w560">
-                <p>
-                    <a class="mt0">Add Test</a>
-                </p>
-                <br/>
-                <p>
-                <ul> <li> <select></select> </li> <li> <a>Delete</a></li> </ul>
-                </p>
-            </article>
-            <div class="clr"></div>  
-        </div>
+<div class="tab_gen_info pb38">
+             	<h3><i class="up_mark icons"></i><i class="side_mark"></i>Test Information</h3>
+                   <article class="left w560">
+<!--                    <p>
+                        <a href="javascript:void(0)" class="mt0 add-test">Add Test</a>
+                    </p>
+                    <br/>-->
+                    <p style="margin-top: 12px"><label>Order ID</label><span class="pL25 order-id"></span></p>
+                    <p class="tests">
+                        <?php foreach($this->tests as $test){ ?>
+                                <ul class="test clr"> 
+                                    <li style="list-style:none; float:left" class="mL52"> <input type="checkbox" name="test_id[]" value="<?php echo $test['id'] ?>"/> </li>
+                                    <li style="list-style:none; float:left" class="mL20"><?php echo $test['name'] ?></li>
+                                </ul>
+                         <?php } ?>
+                    </p>
+               </article>
+                
+               <div class="clr"></div>  
+             </div>
 
         <div class="clr"></div>
     </section>
+    </form>
     <div class="clr"></div>
+    <a href="javascript:void(0)" class="create_new_btn mL52 submit">Submit</a>
 </section>
+<script>
+    $('.submit').click(function(){
+        var formData = $(".frm-patient").serialize();
+        var url = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'postorder'), 'default', true); ?>"
+    console.log(url)
+    $.ajax({
+            type: "POST",
+            url: url,
+            data: formData,
+             dataType: "json",
+            success: function(data)
+            {
+               $('.id').val(data.id);
+               $('.order_id').val(data.order_id);
+               $('.id').text(data.id);
+               $('.order-id').text(data.order_id);
+
+               showMsg(data.messages);
+          }
+    });
+    })
+    $(function() {
+        $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+    });
+    
+     
+    </script>
+
