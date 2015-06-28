@@ -30,5 +30,20 @@ class Application_Model_Patient extends Application_Model_DbTable_Patient {
         $result = $select->query()->fetchAll();
         return $result;
     }
+    
+    public static function resultCalculated($orderId){
+        $obj = new Zend_Db_Select(Zend_Db_Table::getDefaultAdapter());
+        return $obj->from('order_tests as ot', array('test_id'))->where('order_id=?',$orderId)->where('results != ""')->query()->rowCount();
+    }
+    
+    public static function saveTestResult($result, $orderId, $testId){
+        $orderTest = new Application_Model_DbTable_OrderTests();
+        $orderTest->update(['results'=>$result, 'result_calculated_at'=>date('Y-m-d H:i:s')], "test_id=$testId AND order_id=$orderId");
+        $resultCalculated = self::resultCalculated($orderId);
+        $po = new Application_Model_DbTable_PatientOrders();
+        $po->update(['total_results_calculated'=>$resultCalculated], 'id='.$orderId);
+        return 'success';
+    }
+    
 
 }
