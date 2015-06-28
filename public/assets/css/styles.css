@@ -6598,7 +6598,7 @@ section .copmose_panel a.del_btn i {
   float: left;
   margin-right: 9px; }
 
-section .copmose_panel a.compse_btn {
+section a.compse_btn {
   display: block;
   float: right;
   border-radius: 4px;
