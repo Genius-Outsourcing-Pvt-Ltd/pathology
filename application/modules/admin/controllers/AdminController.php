@@ -8,13 +8,12 @@ class Admin_AdminController extends Zend_Controller_Action {
         $this->view->patients = $patients;
     }
     
-<<<<<<< HEAD
     public function vieworderAction() {
         $id = $this->getRequest()->getParam('id', '');
         $patient = patient::getPatientById($id);
 //        echo '<pre>'; print_r($patient); die;
         $this->view->patient = $patient;
-=======
+        }
     public function ordersAction(){
          $auth = Zend_Auth::getInstance();
         $auth->setStorage(new Zend_Auth_Storage_Session('user'));
@@ -37,7 +36,6 @@ class Admin_AdminController extends Zend_Controller_Action {
         $model = new Application_Model_User();
         $select = $model->getallUser();
         $this->view->data = $this->_helper->Paginator($select);
->>>>>>> dfcdea345d5e00fbf8b9555945eb199c35e42940
     }
     
     public function saveresultAction() {

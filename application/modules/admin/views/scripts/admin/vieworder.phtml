@@ -39,13 +39,6 @@
     <div class="clr"></div>
 </section>
 <script>
-function showMsg(msg){
-    $('.userSuccMSG').html(msg);
-    $('.userSuccMSG').css('display','block');
-    $('.userSuccMSG').css("top", 320 + "px");
-    $('.userSuccMSG').css("left", (($(window).width()/2-$('.userSuccMSG').width()/2)-38) + "px");
-    $('.userSuccMSG').fadeOut(4000);
-}
 function saveResult(elem,testId,orderId){
     var result = $(elem).closest('ul').children('li').find('input.result-input').val();
     if(result != ''){
