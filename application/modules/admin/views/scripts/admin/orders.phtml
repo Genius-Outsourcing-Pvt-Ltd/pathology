@@ -11,7 +11,6 @@
 .facebook-auto {
     margin-top: 0px;
 }
-
 </style>
 <section class="msgs_box">
     <div class="msgs_links">
@@ -70,69 +69,10 @@
     <div class="clr"></div>
     <a href="javascript:void(0)" class="create_new_btn mL52 submit">Submit</a>
 </section>
-<script>
-    $('.submit').click(function(){
-        var formData = $(".frm-patient").serialize();
-        var url = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'postorder'), 'default', true); ?>"
-
-    $.ajax({
-            type: "POST",
-            url: url,
-            data: formData,
-             dataType: "json",
-            success: function(data)
-            {
-               $('.id').val(data.id);
-               $('.order_id').val(data.order_id);
-               $('.id').text(data.id);
-               $('.order-id').text(data.order_id);
-
-               showMsg(data.messages);
-          }
-    });
-    })
-    $(function() {
-        $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
-    });
-    
-     $(document).ready(function() {        
-       $("#search").fcbkcomplete({
-                    json_url: "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'search'), 'default', true); ?>",
-                    addontab: true,                   
-                    maxitems: 1,
-                    height: 5,
-                    cache: true,
-                    width:418
-                });      
-    }); 
-    
-    function getSearch(id){
-    console.log(id);
-        url = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'getpatient'), 'default', true); ?>";
-        data = {id:id};
-           $.ajax({
-            type: "POST",
-            url: url,
-            data: data,
-             dataType: "json",
-            success: function(data)
-            {
-               $('.id').val(data.id);
-               $('.id').text(data.id);
-               $('input[name=first_name]').val(data.first_name);
-               $('input[name=last_name]').val(data.last_name);
-               $('input[name=phone_number]').val(data.phone_number);
-               $('input[name=address]').val(data.address);
-               $('input[name=birthday]').val(data.birthday);
-               $('input[name=sex]').val(data.sex);
-               $('input[name=email]').val(data.email);
-               $('input[name=m_r_no]').val(data.m_r_no);
-               $('.order_id').val('');
-               $('.order-id').text('');
-               $('input:checkbox').removeAttr('checked');
-          }
-        });
-        
-        }
+    <script>
+    var patient_submit_url = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'postorder'), 'default', true); ?>";
+    var fcbk_search_url = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'search'), 'default', true); ?>";
+    var pat_search_rul = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'getpatient'), 'default', true); ?>";
     </script>
+    <script src="/assets/js/orders.js" type="text/javascript" charset="utf-8"></script>   
 

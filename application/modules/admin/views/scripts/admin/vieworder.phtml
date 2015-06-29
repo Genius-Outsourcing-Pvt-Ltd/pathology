@@ -48,19 +48,6 @@
     <div class="clr"></div>
 </section>
 <script>
-    $('.save-btn').click(function(){
-        var formData = $(".frm").serialize();
-        var url = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'saveresult'), 'default', true); ?>"
-
-    $.ajax({
-            type: "POST",
-            url: url,
-            data: formData,
-             dataType: "json",
-            success: function(data)
-            {
-                  showMsg(data.messages);
-          }
-    });
-    })
+    var save_result_url = "<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'saveresult'), 'default', true); ?>"
 </script>
+ <script src="/assets/js/save_result.js" type="text/javascript" charset="utf-8"></script>   
