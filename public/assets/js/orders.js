@@ -1,4 +1,10 @@
-
+$('.new').click(function(){
+         $(".frm-patient").serialize();
+         $('.frm-patient').find("input[type=text], textarea, hidden").val("");
+         $('input:checkbox').removeAttr('checked');
+         $('.order-id').text('');
+         $('.id').text('');
+        })
     $('.submit').click(function(){
         var formData = $(".frm-patient").serialize();
         var url = patient_submit_url
