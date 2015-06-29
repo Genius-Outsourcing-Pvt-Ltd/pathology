@@ -1,3 +1,9 @@
+<style>
+    ::-webkit-input-placeholder { font-size: 14px; }
+::-moz-placeholder { font-size: 14px;} /* firefox 19+ */
+:-ms-input-placeholder { font-size: 14px; } /* ie */
+    input:-moz-placeholder { font-size: 14px; }
+</style>
 <section class="msgs_box">
     <div class="msgs_links">
         <h1>Enter Test Order Results</h1>
@@ -31,7 +37,7 @@
                     <ul>
                          <input type="hidden" name="test_id[]" value="<?php echo $test['test_id'];?> "></input>
                         <li class="w300 pL22"><?php echo $test['test_name']; ?></li>
-                        <li class="w300 pL15"><?php echo '<input name="result[]" placeholder="Enter Result Here" class="result-input" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />' ?></li>
+                        <li class="w300 pL15"><?php echo '<input name="result[]" placeholder="Enter Result Here" class="result-input placeholder14" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />' ?></li>
                         <li class="w300 pL16"><?php echo $test['reference_value']; ?></li>
                         <li class="last w230">
                         </li>
