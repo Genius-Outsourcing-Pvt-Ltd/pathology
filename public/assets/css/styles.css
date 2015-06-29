@@ -2767,7 +2767,7 @@ header h1 {
 header .logo {
   width: 277px;
   height: 56px;
-  background: url(../images/logo.png) no-repeat -13px;
+  background: url(../images/logo.png) no-repeat 13 !important;
   float: left;
   margin: 20px 0 0 0; }
 
@@ -6190,7 +6190,7 @@ header
 .logo {
   width: 277px;
   height: 56px;
-  background: url(../images/logo.png) no-repeat -13px;
+  background: url(../images/logo.png) no-repeat 13px;
   float: left;
   margin: 20px 0 0 0; }
 
