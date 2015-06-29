@@ -14,18 +14,27 @@ class Admin_AdminController extends Zend_Controller_Action {
         $this->userObj = $session->__get('userObj');
     }
     public function indexAction() {
+        $messages = $this->_helper->flashMessenger->getMessages();
+        $message = '';
+        if(!empty($messages) && $messages[0] == 'mail_sent'){
+            $message = $messages[0];
+        }
+        $this->view->mail_sent = $message;
         $model = new Application_Model_Patient();
         $id = 0;
         if($this->userObj['user_type'] == 'patient'){
             $id = $this->userObj['id'];
         }
         $patients = $model->getAllPatient($id);
+        $this->view->user_type = $this->userObj['user_type'];
 //        print_r($patients); die;
         $this->view->patients = $patients;
     }
     
     public function vieworderAction() {
-        $id = $this->getRequest()->getParam('id', '');
+
+        $this->view->id = $id = $this->getRequest()->getParam('id', '');
+//        $patient = patient::getPatientById($id);
         $patient = patient::getOrderById($id);
 //        echo '<pre>'; print_r($patient); die;
         $this->view->userType = $this->userObj['user_type'];

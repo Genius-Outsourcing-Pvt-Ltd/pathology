@@ -127,6 +127,9 @@
                $('input[name=sex]').val(data.sex);
                $('input[name=email]').val(data.email);
                $('input[name=m_r_no]').val(data.m_r_no);
+               $('.order_id').val('');
+               $('.order-id').text('');
+               $('input:checkbox').removeAttr('checked');
           }
         });
         

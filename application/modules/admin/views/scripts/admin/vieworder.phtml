@@ -7,7 +7,8 @@
         <div class="tab_panel">
             <h3>View Order</h3>
             <?php if($this->userType == 'patient'){?>
-                    <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf','id'=>$this->patient[0]['userId']), 'downloadPdf', true); ?>" class="compse_btn">Download PDF</a>
+                    <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf','id'=>$this->id), 'downloadPdf', true); ?>" class="compse_btn">Download PDF</a>
+                    <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf','id'=>$this->id, 'email'=>1), 'downloadPdf', true); ?>" class="compse_btn">Email PDF</a>
             <?php } ?>
             <a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'index'), 'patient_orders', true); ?>" class="compse_btn">Back</a>
             <div class="clr"></div>
@@ -26,7 +27,7 @@
                         <li class="w230 pL25"><?php echo $test['name']; ?></li>
                         <li class="w190 pL15"><?php echo $test['order_id']; ?></li>
                         <li class="w190 pL22"><?php echo $test['test_name']; ?></li>
-                        <li class="w190 pL15"><?php echo $this->userType == 'patient'?($test['results'] != ''?$test['results']:0):'<input placeholder="Enter Result Here" class="result-input" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />'; ?></li>
+                        <li class="w190 pL15"><?php echo $this->userType == 'patient'?($test['results'] != ''?$test['results']:'-'):'<input placeholder="Enter Result Here" class="result-input" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />'; ?></li>
                         <li class="w190 pL16"><?php echo date('m-d-Y', strtotime($test['created_at'])); ?></li>
                         <li class="last w80">
                             <?php if($this->userType != 'patient'){?>

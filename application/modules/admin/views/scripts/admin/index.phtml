@@ -1,11 +1,16 @@
 <section class="msgs_box">
     <div class="msgs_links">
+        <?php if($this->user_type=='operator'){ ?>
         <h1>Admin Panel</h1>
+        <?php } else{ ?>
+        <h1>Patient Portal</h1>
+        <?php }  ?>
+        
         <div class="clr"></div>
     </div>
     <section class="drop_downs no-bdr">
         <div class="tab_panel">
-            <h3>My Dashboard</h3>
+            <h3><?php echo $this->user_type=='operator'? 'Enter':'View'; ?> Results</h3>
             <div class="clr"></div>
             <div class="data_listing">
                 <div class="data_listing_header">
@@ -38,3 +43,11 @@
     </section>
     <div class="clr"></div>
 </section>
+<input type='text' id='mail_sent' value='<?php echo $this->mail_sent; ?>'>
+<script>
+    $(document).ready(function(){
+        if($('#mail_sent').val() == 'mail_sent'){
+            showMsg('Email sent successfully to your email address');
+        }
+    });
+</script>
