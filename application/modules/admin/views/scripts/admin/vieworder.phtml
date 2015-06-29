@@ -6,6 +6,12 @@
     <section class="drop_downs no-bdr">
         <div class="tab_panel">
             <h3>View Order</h3>
+            <p><label class=" bold">Patient Name:</label><label class="mL10"><?php echo $this->patient[0]['name']; ?></label>
+            <label class="mL25 bold">M.R.N.No:</label><label class="mL10"><?php echo $this->patient[0]['m_r_no']; ?></label>
+            <label class="mL25 bold">Order No.:</label><label class="mL10"><?php echo $this->patient[0]['order_id']; ?></label>
+            <label class="mL25 bold">Order Date:</label><label class="mL10"><?php echo date('m-d-Y', strtotime($this->patient[0]['date_in'])); ?></label>
+            </p>
+        
             <?php if($this->userType == 'patient'){?>
                     <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf','id'=>$this->id), 'downloadPdf', true); ?>" class="compse_btn">Download PDF</a>
                     <a href="<?php echo $this->url(array('module' => 'patient', 'controller' => 'patient', 'action' => 'downloadpdf','id'=>$this->id, 'email'=>1), 'downloadPdf', true); ?>" class="compse_btn">Email PDF</a>
@@ -14,21 +20,18 @@
             <div class="clr"></div>
             <div class="data_listing">
                 <div class="data_listing_header">
-                    <p class="heading_1 w230">Name</p>
-                    <p class="heading_1 w190 pL20">Order</p>
-                    <p class="heading_1 w190">Test Name</p>
-                    <p class="heading_1 w190">Result</p>
-                    <p class="heading_1 w190">Created At</p>
+                    <p class="heading_1 w300">Test Name</p>
+                    <p class="heading_1 w300">Result</p>
+                    <p class="heading_1 w300">Reference Value</p>
+                    
                     <div class="clr"></div>
                 </div>
                 <div class="clr"></div>
                 <?php foreach($this->patient as $test){ ?>
                     <ul>
-                        <li class="w230 pL25"><?php echo $test['name']; ?></li>
-                        <li class="w190 pL15"><?php echo $test['order_id']; ?></li>
-                        <li class="w190 pL22"><?php echo $test['test_name']; ?></li>
-                        <li class="w190 pL15"><?php echo $this->userType == 'patient'?($test['results'] != ''?$test['results']:'-'):'<input placeholder="Enter Result Here" class="result-input" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />'; ?></li>
-                        <li class="w190 pL16"><?php echo date('m-d-Y', strtotime($test['created_at'])); ?></li>
+                        <li class="w300 pL22"><?php echo $test['test_name']; ?></li>
+                        <li class="w300 pL15"><?php echo $this->userType == 'patient'?($test['results'] != ''?$test['results']:'-'):'<input placeholder="Enter Result Here" class="result-input" value="'.$test['results'].'" style="background:transparent;border: none;" type="text" />'; ?></li>
+                        <li class="w300 pL16"><?php echo $test['reference_value']; ?></li>
                         <li class="last w80">
                             <?php if($this->userType != 'patient'){?>
                                 <a href="javascript:;" onclick="saveResult(this,'<?php echo $test['test_id'] ?>','<?php echo $test['order_id'] ?>')">save</a>
