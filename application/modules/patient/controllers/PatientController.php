@@ -3,11 +3,30 @@
 use Application_Model_Patient as patient;
 require 'PHPMailer-master/PHPMailerAutoload.php';
 class Patient_PatientController extends Zend_Controller_Action {
-
+    public $userObj;
+    public function init() {
+        parent::init();
+        $auth = Zend_Auth::getInstance();
+        $auth->setStorage(new Zend_Auth_Storage_Session('user')); 
+        if (!$auth->hasIdentity()) {
+             $this->_redirect('/');
+        }
+        $session = new Zend_Session_Namespace('userObj');
+        $this->userObj = $session->__get('userObj');
+    }
     public function indexAction() {
         
     }
 
+        public function vieworderAction() {
+
+        $this->view->id = $id = $this->getRequest()->getParam('id', '');
+//        $patient = patient::getPatientById($id);
+        $patient = patient::getOrderById($id);
+//        echo '<pre>'; print_r($patient); die;
+        $this->view->userType = $this->userObj['user_type'];
+        $this->view->patient = $patient;
+        }
     public function viewreportAction() {
         $id = $this->getRequest()->getParam('id', '');
 //        $this->view->patients = $patient = patient::getPatientById($id);

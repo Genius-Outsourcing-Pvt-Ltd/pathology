@@ -122,17 +122,10 @@ class Admin_AdminController extends Zend_Controller_Action {
     public function saveresultAction() {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
-        
-        $testId = $this->getRequest()->getParam('testId', '');
-        $result = $this->getRequest()->getParam('result', '');
-        $orderId = $this->getRequest()->getParam('orderId', '');
-        if(!empty($testId) && !empty($result)){
-            patient::saveTestResult($result, $orderId, $testId);
-            echo json_encode(['response'=>'success']);
+        $data = $this->getRequest()->getPost();
+            patient::saveTestResult($data);
+            echo json_encode(['messages'=>'Results are saved.']);
             die;
-        }
-        echo json_encode(['response'=>'error']);
-        die;
     }
 
 }

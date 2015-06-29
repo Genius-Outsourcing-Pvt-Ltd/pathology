@@ -52,9 +52,22 @@ class Application_Model_Patient extends Application_Model_DbTable_Patient {
         return $obj->from('order_tests as ot', array('test_id'))->where('order_id=?',$orderId)->where('results != ""')->query()->rowCount();
     }
     
-    public static function saveTestResult($result, $orderId, $testId){
+    public static function saveTestResult($data){
+        
+        $orderId = $data['order_id'];
+        foreach($data['test_id'] as $i=>$testId){
+            if($data['result'][$i] == ''){
+                $result = null; 
+                $at = null;
+            }else{
+                $result = $data['result'][$i];
+                 $at = date('Y-m-d H:i:s');
+            }
+         
+
         $orderTest = new Application_Model_DbTable_OrderTests();
-        $orderTest->update(['results'=>$result, 'result_calculated_at'=>date('Y-m-d H:i:s')], "test_id=$testId AND order_id=$orderId");
+        $orderTest->update(['results'=>$result, 'result_calculated_at'=>$at], "test_id=$testId AND order_id=$orderId");
+        }
         $resultCalculated = self::resultCalculated($orderId);
         $po = new Application_Model_DbTable_PatientOrders();
         $po->update(['total_results_calculated'=>$resultCalculated], 'id='.$orderId);

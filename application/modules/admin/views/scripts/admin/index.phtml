@@ -1,16 +1,12 @@
 <section class="msgs_box">
     <div class="msgs_links">
-        <?php if($this->user_type=='operator'){ ?>
-        <h1>Admin Panel</h1>
-        <?php } else{ ?>
-        <h1>Patient Portal</h1>
-        <?php }  ?>
-        
+        <h1>View Test orders</h1>
+
         <div class="clr"></div>
     </div>
     <section class="drop_downs no-bdr">
         <div class="tab_panel">
-            <h3><?php echo $this->user_type=='operator'? 'Enter':'View'; ?> Results</h3>
+            <h3>Test Orders</h3>
             <div class="clr"></div>
             <div class="data_listing">
                 <div class="data_listing_header">
@@ -30,7 +26,11 @@
                         <li class="w190 pL15"><?php echo !empty($patient['total_results_calculated'])?$patient['total_results_calculated']:0; ?></li>
                         <li class="w190 pL16"><?php echo date('m-d-Y', strtotime($patient['created_at'])); ?></li>
                         <li class="last w80">
+                            <?php if($this->user_type=='operator') {?>
                             <a href="<?php echo $this->url(array('module' => 'admin', 'controller' => 'admin', 'action' => 'vieworder', 'id'=>$patient['order_id']), 'vieworder', true); ?>"><i class="icons eye"></i></a>
+                            <?php } else {?>
+                            <a href="<?php echo $this->url(array('id'=>$patient['order_id']), 'patientvieworder', true); ?>"><i class="icons eye"></i></a>
+                            <?php } ?>
                         </li>
                     </ul>
                 <?php } ?>
@@ -43,7 +43,7 @@
     </section>
     <div class="clr"></div>
 </section>
-<input type='text' id='mail_sent' value='<?php echo $this->mail_sent; ?>'>
+<input type='hidden' id='mail_sent' value='<?php echo $this->mail_sent; ?>'>
 <script>
     $(document).ready(function(){
         if($('#mail_sent').val() == 'mail_sent'){
