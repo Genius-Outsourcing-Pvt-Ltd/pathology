@@ -3,7 +3,10 @@ $('.new').click(function(){
          $('.frm-patient').find("input[type=text], textarea, hidden").val("");
          $('input:checkbox').removeAttr('checked');
          $('.order-id').text('');
+         $('.orderid').text('');
+         $('.id').val('');
          $('.id').text('');
+         $('.order_id').val('');
         })
     $('.submit').click(function(){
         var formData = $(".frm-patient").serialize();
