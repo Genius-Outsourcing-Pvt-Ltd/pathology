@@ -5,10 +5,13 @@ class Login_LoginController extends Zend_Controller_Action {
     public function init() {
         /* Initialize action controller here */
     }
-
+/**
+ * Request to login a user comes to this method
+ */
     public function indexAction() {
         $auth = Zend_Auth::getInstance();
         $auth->setStorage(new Zend_Auth_Storage_Session('user'));
+        //If user is already loged in redirect him to dash board.
         if ($auth->hasIdentity()) {
             $this->_redirect('patient/orders');
         }
@@ -57,7 +60,9 @@ class Login_LoginController extends Zend_Controller_Action {
         }
         $this->view->form = $form;
     }
-
+/**
+ * Logout request comes to this action.
+ */
     public function logoutAction() {
         $auth = Zend_Auth::getInstance();
         $auth->setStorage(new Zend_Auth_Storage_Session('user'));

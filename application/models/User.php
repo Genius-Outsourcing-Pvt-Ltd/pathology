@@ -8,9 +8,9 @@ class Application_Model_User extends Application_Model_DbTable_User
     }
 
     /**
+     * This method logs in the user
      * Member login
-     * @author Qadeer Ahmad
-     * @copyright Strategic System International
+     * @author Kashif Irshad
      * @param string $userName
      * @param string $password in md5 encryption
      * @return string return 'success' for successfully login and all other messages are error message 

@@ -4,6 +4,9 @@ use Application_Model_Patient as patient;
 require 'PHPMailer-master/PHPMailerAutoload.php';
 class Patient_PatientController extends Zend_Controller_Action {
     public $userObj;
+    /**
+     * Check authorizatioin. if user is not logged in redirect him to login
+     */
     public function init() {
         parent::init();
         $auth = Zend_Auth::getInstance();
@@ -17,28 +20,31 @@ class Patient_PatientController extends Zend_Controller_Action {
     public function indexAction() {
         
     }
-
+/**
+ * Order detail of patient is viewed by this action.
+ */
         public function vieworderAction() {
 
         $this->view->id = $id = $this->getRequest()->getParam('id', '');
-//        $patient = patient::getPatientById($id);
         $patient = patient::getOrderById($id);
-//        echo '<pre>'; print_r($patient); die;
         $this->view->userType = $this->userObj['user_type'];
         $this->view->patient = $patient;
         }
+        /**
+         * Report view is rendered by this method
+         */
     public function viewreportAction() {
         $id = $this->getRequest()->getParam('id', '');
-//        $this->view->patients = $patient = patient::getPatientById($id);
         $this->view->patients = $patient = patient::getOrderById($id);
-//        print_r($patient); die;
         $age = '';
         if(!empty($patient[0]['birthday']) && $patient[0]['birthday'] != ''){
             $age = $this->calculatePatientAge($patient[0]['birthday']);
         }
         $this->view->age = $age;
     }
-
+/**
+ * PDF of a test order is downloaded by this method
+ */
     public function downloadpdfAction() {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
@@ -60,8 +66,8 @@ class Patient_PatientController extends Zend_Controller_Action {
             $mail->FromName = 'Lab';
             $mail->addAddress($patient[0]['email'], ''); 
             $mail->addAttachment('tmp/'.$fileName); 
-            $mail->Subject = 'Here is the subject';
-            $mail->Body    = 'This is the HTML message body <b>in bold!';   
+            $mail->Subject = 'Your Test Report';
+            $mail->Body    = 'Please find attached report';   
             if(!$mail->send()) {
                 echo 'Message could not be sent.';
                 echo 'Mailer Error: ' . $mail->ErrorInfo;
@@ -73,12 +79,22 @@ class Patient_PatientController extends Zend_Controller_Action {
             }
         }
     }
-
+/**
+ * Patient Age is calculated by this method based upon birthday
+ * @param type $dob
+ * @return type
+ */
     public function calculatePatientAge($dob) {
         $dob = date('m/d/Y', strtotime($dob));
+        if(empty($dob)){
+            return '-';
+        }
         $tz  = new DateTimeZone('Europe/Brussels');
-        return $age = DateTime::createFromFormat('d/m/Y', $dob, $tz)
-                ->diff(new DateTime('now', $tz))->y;
+        $dt = DateTime::createFromFormat('d/m/Y', $dob, $tz);
+        if(empty($dt)){
+            return '-';
+        }
+        return $age = $dt->diff(new DateTime('now', $tz))->y;
     }
 
 }
